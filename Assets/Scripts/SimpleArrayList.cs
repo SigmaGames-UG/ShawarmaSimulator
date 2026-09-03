@@ -9,7 +9,7 @@ public class SimpleArrayList<T> : ISimpleList<T>
         array = new T[capacity];
         count = 0;
     }
-
+    
     public void Add(T item)
     {
         if (count >= array.Length)
