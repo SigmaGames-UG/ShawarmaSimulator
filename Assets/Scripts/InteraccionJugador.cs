@@ -18,6 +18,7 @@ public class InteraccionJugador : MonoBehaviour
             ItemRecogible item = hit.collider.GetComponentInParent<ItemRecogible>();
             BaseTrompo baseTrompo = hit.collider.GetComponentInParent<BaseTrompo>();
             BandejaLechuga bandeja = hit.collider.GetComponentInParent<BandejaLechuga>(); // ¡NUEVO!
+            ArmadoShawarma plato = hit.collider.GetComponentInParent<ArmadoShawarma>();
 
             // CASO A: Miramos la máquina del Trompo
             if (baseTrompo != null)
@@ -116,7 +117,46 @@ public class InteraccionJugador : MonoBehaviour
                     }
                 }
             }
-            // CASO D: Miramos una mesa vacía
+
+                // CASO D: Miramos el Plato de Armado
+            else if (plato != null)
+            {
+                if (inventario.TieneHerramientas())
+                {
+                    if (plato.PuedeAgregar())
+                    {
+                        string ingrediente = inventario.ObtenerNombreActual();
+                        textoAviso.text = "Presiona E para agregar " + ingrediente + " al shawarma";
+
+                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                        {
+                            plato.AgregarIngrediente(ingrediente);
+                            inventario.ConsumirHerramientaActual(); // Desaparece de tu mano
+                        }
+                    }
+                    else
+                    {
+                        textoAviso.text = "El shawarma está lleno";
+                    }
+                }
+                else
+                {
+                    if (plato.CantidadIngredientes() > 0)
+                    {
+                        textoAviso.text = "Shawarma en proceso. Presiona Q para TIRAR TODO a la basura";
+
+                        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
+                        {
+                            plato.TirarShawarma();
+                        }
+                    }
+                    else
+                    {
+                        textoAviso.text = "Pan vacío listo para armar";
+                    }
+                }
+            }
+            // CASO E: Miramos una mesa vacía (Era el Caso C anterior)
             else
             {
                 if (inventario.TieneHerramientas())
@@ -131,7 +171,12 @@ public class InteraccionJugador : MonoBehaviour
                 }
                 else textoAviso.text = "";
             }
+
         }
         else textoAviso.text = "";
+    
+    
+    
     }
+
 }
