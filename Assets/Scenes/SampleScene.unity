@@ -1542,21 +1542,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b2ec6841e747ab345a1ea189dbcee0b1, type: 3}
   m_PrefabInstance: {fileID: 1541696859}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &500359177
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 500359176}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebc513a5c87f66740acae238ecd5feb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemRecogible
-  nombreHerramienta: Masa
-  iconoHerramienta: {fileID: 0}
-  modeloMano_Prefab: {fileID: 0}
 --- !u!65 &500359178
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1578,6 +1563,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.9118652, y: 0.043503467, z: 1.9124241}
   m_Center: {x: -0.01095575, y: -0.024999997, z: -0.011235594}
+--- !u!114 &500359182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500359176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b477a2335c0c4454397ead2884635c0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArmadoShawarma
+  puntoDeApoyo: {fileID: 0}
+  alturaPorIngrediente: 0.05
+  prefabCarnePlana: {fileID: 0}
+  prefabLechugaPlana: {fileID: 0}
+  prefabKetchupPlano: {fileID: 0}
 --- !u!1 &538650585
 GameObject:
   m_ObjectHideFlags: 0
@@ -3738,7 +3740,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b2ec6841e747ab345a1ea189dbcee0b1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 348.8975
+      value: 342.9
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b2ec6841e747ab345a1ea189dbcee0b1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3797,7 +3799,7 @@ PrefabInstance:
       addedObject: {fileID: 500359178}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b2ec6841e747ab345a1ea189dbcee0b1, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 500359177}
+      addedObject: {fileID: 500359182}
   m_SourcePrefab: {fileID: 100100000, guid: b2ec6841e747ab345a1ea189dbcee0b1, type: 3}
 --- !u!1 &1552380407
 GameObject:
@@ -5319,7 +5321,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6a4badaed2abda478417d364f608f8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JugadorFPS
-  velocidad: 35
+  velocidad: 65
   sensibilidadMouse: 10
   camaraJugador: {fileID: 330585546}
 --- !u!143 &2029399721
