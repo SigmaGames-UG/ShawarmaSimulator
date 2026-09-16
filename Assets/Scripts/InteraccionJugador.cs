@@ -1,6 +1,7 @@
+using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 
 public class InteraccionJugador : MonoBehaviour
 {
@@ -17,8 +18,9 @@ public class InteraccionJugador : MonoBehaviour
         {
             ItemRecogible item = hit.collider.GetComponentInParent<ItemRecogible>();
             BaseTrompo baseTrompo = hit.collider.GetComponentInParent<BaseTrompo>();
-            BandejaLechuga bandeja = hit.collider.GetComponentInParent<BandejaLechuga>(); // ¡NUEVO!
+            BandejaLechuga bandeja = hit.collider.GetComponentInParent<BandejaLechuga>(); 
             ArmadoShawarma plato = hit.collider.GetComponentInParent<ArmadoShawarma>();
+            Cliente cliente = hit.collider.GetComponentInParent<Cliente>();
 
             // CASO A: Miramos la máquina del Trompo
             if (baseTrompo != null)
@@ -72,14 +74,14 @@ public class InteraccionJugador : MonoBehaviour
             {
                 if (bandeja.porcionesActuales == 0)
                 {
-                    // ¡Asegurate de que el ítem que comprás se llame exactamente "Lechuga"!
+                    
                     if (inventario.ObtenerNombreActual() == "Lechuga")
                     {
                         textoAviso.text = "Presiona E para llenar la bandeja";
                         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             bandeja.LlenarBandeja();
-                            inventario.ConsumirHerramientaActual(); // Sacamos la lechuga entera de tu mano
+                            inventario.ConsumirHerramientaActual(); 
                         }
                     }
                     else
@@ -118,7 +120,7 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-                // CASO D: Miramos el Plato de Armado
+            // CASO D: Miramos el Plato de Armado
             else if (plato != null)
             {
                 if (inventario.TieneHerramientas())
@@ -131,7 +133,7 @@ public class InteraccionJugador : MonoBehaviour
                         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             plato.AgregarIngrediente(ingrediente);
-                            inventario.ConsumirHerramientaActual(); // Desaparece de tu mano
+                            inventario.ConsumirHerramientaActual();
                         }
                     }
                     else
@@ -141,13 +143,19 @@ public class InteraccionJugador : MonoBehaviour
                 }
                 else
                 {
+                    // Si el plato tiene ingredientes y nuestras manos están vacías
                     if (plato.CantidadIngredientes() > 0)
                     {
-                        textoAviso.text = "Shawarma en proceso. Presiona Q para TIRAR TODO a la basura";
+                        // Le damos ambas opciones al jugador
+                        textoAviso.text = "Q para TIRAR | R para CERRAR shawarma";
 
                         if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
                         {
                             plato.TirarShawarma();
+                        }
+                        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+                        {
+                            plato.CerrarShawarma(inventario); // Lo envolvemos y lo agarramos
                         }
                     }
                     else
@@ -156,7 +164,43 @@ public class InteraccionJugador : MonoBehaviour
                     }
                 }
             }
-            // CASO E: Miramos una mesa vacía (Era el Caso C anterior)
+
+            // CASO E: Miramos a un Cliente
+            else if (cliente != null)
+            {
+                // Si el cliente recién llega
+                if (cliente.estadoActual == Cliente.Estado.EsperandoAtencion)
+                {
+                    
+                    textoAviso.text = "Presiona R para aceptar pedido: " + cliente.ObtenerTextoPedido();
+
+                    if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+                    {
+                        cliente.AceptarPedido();
+                    }
+                }
+                // Si ya le tomaste el pedido y espera su comida
+                else if (cliente.estadoActual == Cliente.Estado.EsperandoComida)
+                {
+                    if (inventario.ObtenerNombreActual() == "Shawarma")
+                    {
+                        textoAviso.text = "Presiona R para entregar el Shawarma";
+
+                        if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+                        {
+                            cliente.RecibirComida(inventario); // Te lo saca de la mano y destruye al cliente
+                        }
+                    }
+                    else
+                    {
+                        textoAviso.text = "Esperando: " + cliente.ObtenerTextoPedido();
+                    }
+                }
+            }
+
+
+
+            // CASO F: Miramos una mesa vacía 
             else
             {
                 if (inventario.TieneHerramientas())
@@ -174,6 +218,8 @@ public class InteraccionJugador : MonoBehaviour
 
         }
         else textoAviso.text = "";
+
+       
     
     
     
