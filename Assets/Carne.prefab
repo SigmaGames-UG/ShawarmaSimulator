@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5451985092494269694}
   - component: {fileID: 2442359021207356078}
   - component: {fileID: 8114692848397349799}
+  - component: {fileID: -3514485135639894164}
   m_Layer: 0
   m_Name: Carne
   m_TagString: Untagged
@@ -112,3 +113,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-3514485135639894164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2616076223218808363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebc513a5c87f66740acae238ecd5feb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemRecogible
+  nombreHerramienta: Carne
+  iconoHerramienta: {fileID: 0}
+  modeloMano_Prefab: {fileID: 2616076223218808363}
