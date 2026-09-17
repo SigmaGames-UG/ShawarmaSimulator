@@ -8,7 +8,7 @@ public class TrompoInteractivo : MonoBehaviour
     [Header("Datos de la Carne")]
     public string nombreCarne = "Carne";
     public Sprite iconoCarne;
-    public GameObject prefabCarne; // El prefab 3D de la carne (¡Asegúrate de que tenga ItemRecogible y BoxCollider!)
+    public GameObject prefabCarne; 
 
     void Start()
     {
@@ -17,7 +17,7 @@ public class TrompoInteractivo : MonoBehaviour
 
     public void SacarCarne(ToolManager inventario)
     {
-        // Solo saca carne si quedan usos y tienes las manos libres
+       
         if (usosActuales > 0 && !inventario.TieneHerramientas())
         {
             usosActuales--;
@@ -25,10 +25,10 @@ public class TrompoInteractivo : MonoBehaviour
             // 1. Instanciamos el objeto físico de la carne
             GameObject nuevaCarne = Instantiate(prefabCarne);
 
-            // 2. Lo teletransportamos directo a tu mano usando tu sistema
+            // 2. Lo teletransportamos directo a la mano usando tu sistema
             inventario.AgregarHerramienta(nombreCarne, iconoCarne, nuevaCarne);
 
-            // Opcional para el futuro: Aquí podrías achicar la escala del trompo 
+            // Opcional para el futuro: achicar el trompo
             // visualmente para que parezca que se va consumiendo.
         }
     }

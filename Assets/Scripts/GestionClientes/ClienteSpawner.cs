@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using TMPro; //
+using TMPro; 
 
 public class ClienteSpawner : MonoBehaviour
 {

@@ -10,7 +10,7 @@ public class TiendaManager : MonoBehaviour
     public Transform puntoEntrega;
     public GameObject prefabCaja;
 
-    // ¡NUEVA VARIABLE! Acá arrastraremos el script que mueve tu visión
+    
     public MonoBehaviour scriptCamara;
 
     [Header("Bases de Datos de Salsas")]
@@ -43,7 +43,7 @@ public class TiendaManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
 
-                // Apagamos el script de la cámara para que no gire
+                
                 if (scriptCamara != null) scriptCamara.enabled = false;
             }
             else
@@ -62,7 +62,7 @@ public class TiendaManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Volvemos a prender el script de la cámara
+        
         if (scriptCamara != null) scriptCamara.enabled = true;
     }
 

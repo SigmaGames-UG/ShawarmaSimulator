@@ -13,7 +13,7 @@ public class ArmadoShawarma : MonoBehaviour
     public GameObject prefabKetchupPlano;
 
     [Header("Shawarma Terminado")]
-    public GameObject prefabShawarmaTerminado; // El asset del shawarma ya envuelto
+    public GameObject prefabShawarmaTerminado; 
     public string nombreShawarma = "Shawarma";
     public Sprite iconoShawarma;
 
@@ -55,10 +55,10 @@ public class ArmadoShawarma : MonoBehaviour
         }
     }
 
-    // ¡NUEVA FUNCIÓN! Envolver y entregarlo a la mano
+    // Envolver y entregarlo a la mano
     public void CerrarShawarma(ToolManager inventario)
     {
-        // Vaciamos visual y lógicamente el plato
+        
         while (!pilaIngredientes.IsEmpty())
         {
             Destroy(pilaIngredientes.Pop());

@@ -7,10 +7,10 @@ public class BaseTrompo : MonoBehaviour
     public int usosActuales = 0;
 
     [Header("Visuales y Prefabs")]
-    // Este es el modelo 3D gigante del trompo que va a estar FIJO en la máquina (arranca apagado)
+   
     public GameObject modeloTrompoVisual;
 
-    // Este es el cubito de carne que te va a dar a la mano
+    
     public GameObject prefabCarne;
     public string nombreCarne = "Carne";
     public Sprite iconoCarne;
@@ -25,7 +25,7 @@ public class BaseTrompo : MonoBehaviour
     {
         tieneTrompo = true;
         usosActuales = usosMaximos;
-        if (modeloTrompoVisual != null) modeloTrompoVisual.SetActive(true); // ¡Aparece el trompo!
+        if (modeloTrompoVisual != null) modeloTrompoVisual.SetActive(true); 
     }
 
     public void SacarCarne(ToolManager inventario)
@@ -34,7 +34,7 @@ public class BaseTrompo : MonoBehaviour
         {
             usosActuales--;
 
-            // Creamos la carne y la teletransportamos a tu mano
+           
             GameObject nuevaCarne = Instantiate(prefabCarne);
             inventario.AgregarHerramienta(nombreCarne, iconoCarne, nuevaCarne);
         }
@@ -44,6 +44,6 @@ public class BaseTrompo : MonoBehaviour
     {
         tieneTrompo = false;
         usosActuales = 0;
-        if (modeloTrompoVisual != null) modeloTrompoVisual.SetActive(false); // ¡Desaparece el trompo!
+        if (modeloTrompoVisual != null) modeloTrompoVisual.SetActive(false); 
     }
 }

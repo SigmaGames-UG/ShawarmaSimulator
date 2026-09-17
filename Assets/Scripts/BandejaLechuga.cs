@@ -41,7 +41,7 @@ public class BandejaLechuga : MonoBehaviour
         }
     }
 
-    // Esta función es la magia: decide qué asset mostrar
+
     private void ActualizarVisuales()
     {
         // 1. Apagamos todas por las dudas

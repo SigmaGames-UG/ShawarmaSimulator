@@ -23,14 +23,14 @@ public class ToolManager : MonoBehaviour
         toolModels = new SimpleArrayList<GameObject>(1);
         ActualizarPantalla();
     }
-    // Nos dice qué tenemos en la mano para saber si es un Trompo
+    
     public string ObtenerNombreActual()
     {
         if (tools.Count > 0) return tools.Get(0);
         return "";
     }
 
-    // Borra el objeto de la mano (lo usamos al enchufarlo en la máquina)
+    
     public void ConsumirHerramientaActual()
     {
         if (tools.Count == 0) return;
@@ -76,29 +76,29 @@ public class ToolManager : MonoBehaviour
 
         GameObject objetoEnMano = toolModels.Get(0);
 
-        // 1. Lo despegamos de la mano
+     
         objetoEnMano.transform.SetParent(null);
 
-        // 2. Le devolvemos su rotación y tamaño original de la mesa
+        
         objetoEnMano.transform.rotation = rotacionOriginal;
         objetoEnMano.transform.localScale = escalaOriginal;
 
-        // 3. Le prendemos el colisionador PRIMERO para poder medirlo
+        
         Collider col = objetoEnMano.GetComponent<Collider>();
         if (col != null) col.enabled = true;
 
-        // 4. EL TRUCO MAGISTRAL: Calculamos cuánto hay que subirlo.
-        // col.bounds.extents.y nos da exactamente la mitad de la altura física de tu objeto
+       
+        
         float alturaParaSubir = 60f;
         if (col != null)
         {
             alturaParaSubir = col.bounds.extents.y;
         }
 
-        // 5. Lo apoyamos sumándole esa altura exacta
+        
         objetoEnMano.transform.position = posicionExactaMesa + new Vector3(0, alturaParaSubir, 0);
 
-        // 6. Vaciamos las listas
+        
         tools.RemoveAt(0);
         toolSprites.RemoveAt(0);
         toolModels.RemoveAt(0);
