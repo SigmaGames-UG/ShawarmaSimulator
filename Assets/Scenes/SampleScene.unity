@@ -3583,6 +3583,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1483267059}
   - component: {fileID: 1483267058}
+  - component: {fileID: 1483267060}
   m_Layer: 0
   m_Name: SistemaCliente
   m_TagString: Untagged
@@ -3597,7 +3598,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1483267057}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0e0781241bca48478d969cabfdb3536, type: 3}
   m_Name: 
@@ -3618,12 +3619,26 @@ Transform:
   m_GameObject: {fileID: 1483267057}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 206.79388, y: -219, z: -227.28253}
+  m_LocalPosition: {x: 497, y: -189.6, z: 125.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1483267060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1483267057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d3b2decae9d6f74f9ab6287e68dc950, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClienteQueue
+  clientPrefab: {fileID: 1627251851401703514, guid: 93a146286c643084984b98c2d3388fb0, type: 3}
+  spawnPoint: {fileID: 1483267059}
 --- !u!1 &1531867976
 GameObject:
   m_ObjectHideFlags: 0

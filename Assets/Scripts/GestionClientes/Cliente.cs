@@ -5,7 +5,9 @@ public class Cliente : MonoBehaviour
 {
     public enum Estado { EsperandoAtencion, EsperandoComida, Satisfecho }
     public Estado estadoActual = Estado.EsperandoAtencion;
-
+    private bool moving = false;
+    private int speed = 140;
+    private Vector3 targetPosition;
     // Usamos una Lista para guardar los ingredientes que quiere
     public List<string> pedido = new List<string>();
 
@@ -23,7 +25,7 @@ public class Cliente : MonoBehaviour
         pedido.Add("Carne");
 
         /* 
-        // PARA HACERLO RANDOM CUANDO SOL ME PASE MAS ASSETS, DESCOMENTA ESTO:
+        // PARA HACERLO RANDOM CUANDO SOL ME PASE MAS ASSETS, DESCOMENTAR ESTO:
         int cantidadIngredientes = Random.Range(1, 4); // Pide entre 1 y 3 cosas
         for (int i = 0; i < cantidadIngredientes; i++)
         {
@@ -51,5 +53,21 @@ public class Cliente : MonoBehaviour
 
         // El cliente se va (Por ahora lo destruimos)
         Destroy(gameObject);
+    }
+    private void Update()
+    {
+        if (moving)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+        }
+        if (transform.position == targetPosition)
+        {
+            moving = false;
+        }
+    }
+    public void MoveTo(Vector3 Position)
+    {
+        targetPosition = Position;
+        moving = true;
     }
 }
