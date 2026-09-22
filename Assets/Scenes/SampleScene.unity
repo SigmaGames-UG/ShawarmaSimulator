@@ -3639,6 +3639,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClienteQueue
   clientPrefab: {fileID: 1627251851401703514, guid: 93a146286c643084984b98c2d3388fb0, type: 3}
   spawnPoint: {fileID: 1483267059}
+  textoPedidosUI: {fileID: 230003217}
 --- !u!1 &1531867976
 GameObject:
   m_ObjectHideFlags: 0

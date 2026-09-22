@@ -8,8 +8,11 @@ public class Cliente : MonoBehaviour
     private bool moving = false;
     private int speed = 140;
     private Vector3 targetPosition;
+
+
     // Usamos una Lista para guardar los ingredientes que quiere
     public List<string> pedido = new List<string>();
+    public ClienteQueue clienteQueue;
 
     // Lista de ingredientes posibles 
     private string[] ingredientesPosibles = { "Carne", "Lechuga", "Ketchup" };
