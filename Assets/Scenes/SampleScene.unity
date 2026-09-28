@@ -2353,8 +2353,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 1.0955975}
+  m_Center: {x: 0, y: 0, z: 0.047798365}
 --- !u!23 &1080534553
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4763,6 +4763,33 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1450172422113695309, guid: 0e1e58bf909504e44907ad011ee9fdf7, type: 3}
   m_PrefabInstance: {fileID: 6093626949242536508}
   m_PrefabAsset: {fileID: 0}
+--- !u!54 &1840460987
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840460981}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 2
 --- !u!1 &1855747967
 GameObject:
   m_ObjectHideFlags: 0
@@ -5748,7 +5775,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemRecogible
   nombreHerramienta: Caja De Pedido
   iconoHerramienta: {fileID: 21300000, guid: 77704c34f9ba6de4ebf4556d9615fce0, type: 3}
-  modeloMano_Prefab: {fileID: 5624663142958117422, guid: fa1ab707c37607744b4923d27120e6a9, type: 3}
+  posicionEnMano: {x: 0, y: 0, z: -5}
+  rotacionEnMano: {x: -90, y: 0, z: 0}
 --- !u!65 &2123356875
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6077,7 +6105,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1450172422113695309, guid: 0e1e58bf909504e44907ad011ee9fdf7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1840460987}
   m_SourcePrefab: {fileID: 100100000, guid: 0e1e58bf909504e44907ad011ee9fdf7, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

@@ -51,16 +51,45 @@ public class ToolManager : MonoBehaviour
         toolSprites.Add(icono);
         toolModels.Add(objetoFisico);
 
+        // Guardamos cómo era originalmente
         rotacionOriginal = objetoFisico.transform.rotation;
         escalaOriginal = objetoFisico.transform.localScale;
 
-        objetoFisico.transform.SetParent(posicionMano);
-        objetoFisico.transform.localPosition = Vector3.zero;
-        objetoFisico.transform.localRotation = Quaternion.identity;
-        objetoFisico.transform.localScale = new Vector3(1f, 1f, 1f);
+        // Lo colocamos en la mano
+        objetoFisico.transform.SetParent(posicionMano, false);
+
+        ItemRecogible item = objetoFisico.GetComponent<ItemRecogible>();
+
+        if (item != null)
+        {
+            objetoFisico.transform.localPosition = item.posicionEnMano;
+            objetoFisico.transform.localRotation =
+                Quaternion.Euler(item.rotacionEnMano);
+        }
+        else
+        {
+            objetoFisico.transform.localPosition = Vector3.zero;
+            objetoFisico.transform.localRotation = Quaternion.identity;
+        }
+
+        // Conservamos el tamaño original
+        objetoFisico.transform.localScale = escalaOriginal;
 
         Collider col = objetoFisico.GetComponent<Collider>();
-        if (col != null) col.enabled = false;
+
+        if (col != null)
+        {
+            col.enabled = false;
+        }
+
+        Rigidbody rb = objetoFisico.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
+
 
         ActualizarPantalla();
     }
