@@ -177,7 +177,7 @@ public class InteraccionJugador : MonoBehaviour
                     if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                     {
                         cliente.AceptarPedido();
-                        cliente.clienteQueue.UpdatePosition();
+                  //      cliente.clienteQueue.UpdatePosition();
                     }
                 }
                 // Si ya le tomaste el pedido y espera su comida

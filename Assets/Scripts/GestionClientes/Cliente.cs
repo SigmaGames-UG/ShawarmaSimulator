@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class Cliente : MonoBehaviour
 {
@@ -9,12 +8,10 @@ public class Cliente : MonoBehaviour
     private int speed = 140;
     private Vector3 targetPosition;
 
-
-    // Usamos una Lista para guardar los ingredientes que quiere
-    public List<string> pedido = new List<string>();
+    
+    public ISimpleSet<string> pedido = new SimpleArraySet<string>(5);
     public ClienteQueue clienteQueue;
 
-    // Lista de ingredientes posibles 
     private string[] ingredientesPosibles = { "Carne", "Lechuga", "Ketchup" };
 
     void Start()
@@ -24,24 +21,24 @@ public class Cliente : MonoBehaviour
 
     void GenerarPedido()
     {
-        // siempre pide Carne de forma fija.
+       
         pedido.Add("Carne");
 
-        /* 
-        // PARA HACERLO RANDOM CUANDO SOL ME PASE MAS ASSETS, DESCOMENTAR ESTO:
-        int cantidadIngredientes = Random.Range(1, 4); // Pide entre 1 y 3 cosas
-        for (int i = 0; i < cantidadIngredientes; i++)
+        
+        int cantidadDeseada = Random.Range(1, 4);
+
+        
+        while (pedido.Count < cantidadDeseada)
         {
             string ingredienteAzar = ingredientesPosibles[Random.Range(0, ingredientesPosibles.Length)];
+
             pedido.Add(ingredienteAzar);
         }
-        */
     }
 
-    
     public string ObtenerTextoPedido()
     {
-        return string.Join(" + ", pedido);
+        return string.Join(" + ", pedido.ToArray());
     }
 
     public void AceptarPedido()
@@ -51,12 +48,11 @@ public class Cliente : MonoBehaviour
 
     public void RecibirComida(ToolManager inventario)
     {
-        inventario.ConsumirHerramientaActual(); 
+        inventario.ConsumirHerramientaActual();
         estadoActual = Estado.Satisfecho;
-
-        // El cliente se va (Por ahora lo destruimos)
         Destroy(gameObject);
     }
+
     private void Update()
     {
         if (moving)
@@ -68,6 +64,7 @@ public class Cliente : MonoBehaviour
             moving = false;
         }
     }
+
     public void MoveTo(Vector3 Position)
     {
         targetPosition = Position;
