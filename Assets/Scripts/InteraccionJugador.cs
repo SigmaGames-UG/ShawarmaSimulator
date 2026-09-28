@@ -1,6 +1,6 @@
 using TMPro;
-using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.UI; // ¡Librería necesaria para controlar la Imagen!
 using UnityEngine.InputSystem;
 
 public class InteraccionJugador : MonoBehaviour
@@ -8,7 +8,14 @@ public class InteraccionJugador : MonoBehaviour
     public Transform camara;
     public float distanciaInteraccion = 15f;
     public ToolManager inventario;
-    public TextMeshProUGUI textoAviso;
+
+    [Header("Interfaz Visual")]
+    public Image iconoInteraccionEnPantalla; // La nueva imagen del Canvas
+    public Sprite iconoTeclaE; // Tu asset para la tecla E
+    public Sprite iconoTeclaR; // Tu asset para la tecla R
+    public Sprite iconoManoBloqueada; // Opcional: Una cruz o mano tachada para "Manos ocupadas"
+
+    public TextMeshProUGUI textoAviso; // Lo conservamos para avisos combinados
 
     void Update()
     {
@@ -18,7 +25,7 @@ public class InteraccionJugador : MonoBehaviour
         {
             ItemRecogible item = hit.collider.GetComponentInParent<ItemRecogible>();
             BaseTrompo baseTrompo = hit.collider.GetComponentInParent<BaseTrompo>();
-            BandejaLechuga bandeja = hit.collider.GetComponentInParent<BandejaLechuga>(); 
+            BandejaLechuga bandeja = hit.collider.GetComponentInParent<BandejaLechuga>();
             ArmadoShawarma plato = hit.collider.GetComponentInParent<ArmadoShawarma>();
             Cliente cliente = hit.collider.GetComponentInParent<Cliente>();
 
@@ -29,26 +36,23 @@ public class InteraccionJugador : MonoBehaviour
                 {
                     if (inventario.ObtenerNombreActual() == "Trompo")
                     {
-                        textoAviso.text = "Presiona E para colocar el Trompo";
+                        MostrarIcono(iconoTeclaE);
                         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             baseTrompo.ColocarTrompo();
                             inventario.ConsumirHerramientaActual();
                         }
                     }
-                    else
-                    {
-                        textoAviso.text = "Máquina de Trompo (Vacía)";
-                    }
+                    else MostrarTexto("Máquina de Trompo (Vacía)");
                 }
                 else
                 {
                     if (baseTrompo.usosActuales > 0)
                     {
-                        if (inventario.TieneHerramientas()) textoAviso.text = "Manos ocupadas";
+                        if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
                         else
                         {
-                            textoAviso.text = "Presiona R para cortar carne (" + baseTrompo.usosActuales + "/7)";
+                            MostrarIcono(iconoTeclaR);
                             if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                             {
                                 baseTrompo.SacarCarne(inventario);
@@ -57,10 +61,10 @@ public class InteraccionJugador : MonoBehaviour
                     }
                     else
                     {
-                        if (inventario.TieneHerramientas()) textoAviso.text = "Manos ocupadas";
+                        if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
                         else
                         {
-                            textoAviso.text = "Presiona E para quitar trompo vacío";
+                            MostrarIcono(iconoTeclaE);
                             if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                             {
                                 baseTrompo.LimpiarTrompo();
@@ -74,30 +78,23 @@ public class InteraccionJugador : MonoBehaviour
             {
                 if (bandeja.porcionesActuales == 0)
                 {
-                    
                     if (inventario.ObtenerNombreActual() == "Lechuga")
                     {
-                        textoAviso.text = "Presiona E para llenar la bandeja";
+                        MostrarIcono(iconoTeclaE);
                         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             bandeja.LlenarBandeja();
-                            inventario.ConsumirHerramientaActual(); 
+                            inventario.ConsumirHerramientaActual();
                         }
                     }
-                    else
-                    {
-                        textoAviso.text = "Bandeja de Lechuga (Vacía)";
-                    }
+                    else MostrarTexto("Bandeja de Lechuga (Vacía)");
                 }
                 else
                 {
-                    if (inventario.TieneHerramientas())
-                    {
-                        textoAviso.text = "Manos ocupadas";
-                    }
+                    if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
                     else
                     {
-                        textoAviso.text = "Presiona R para agarrar lechuga (" + bandeja.porcionesActuales + "/8)";
+                        MostrarIcono(iconoTeclaR);
                         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                         {
                             bandeja.SacarPorcion(inventario);
@@ -108,18 +105,16 @@ public class InteraccionJugador : MonoBehaviour
             // CASO C: Miramos un aderezo, caja, o ítem suelto
             else if (item != null)
             {
-                if (inventario.TieneHerramientas()) textoAviso.text = "Primero suelta tu objeto para agarrar otro";
+                if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
                 else
                 {
-                    textoAviso.text = "Presiona E para agarrar " + item.nombreHerramienta;
-
+                    MostrarIcono(iconoTeclaE);
                     if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                     {
                         inventario.AgregarHerramienta(item.nombreHerramienta, item.iconoHerramienta, item.gameObject);
                     }
                 }
             }
-
             // CASO D: Miramos el Plato de Armado
             else if (plato != null)
             {
@@ -127,103 +122,100 @@ public class InteraccionJugador : MonoBehaviour
                 {
                     if (plato.PuedeAgregar())
                     {
-                        string ingrediente = inventario.ObtenerNombreActual();
-                        textoAviso.text = "Presiona E para agregar " + ingrediente + " al shawarma";
-
+                        MostrarIcono(iconoTeclaE);
                         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
-                            plato.AgregarIngrediente(ingrediente);
+                            plato.AgregarIngrediente(inventario.ObtenerNombreActual());
                             inventario.ConsumirHerramientaActual();
                         }
                     }
-                    else
-                    {
-                        textoAviso.text = "El shawarma está lleno";
-                    }
+                    else MostrarTexto("El shawarma está lleno");
                 }
                 else
                 {
-                    // Si el plato tiene ingredientes y nuestras manos están vacías
                     if (plato.CantidadIngredientes() > 0)
                     {
-                        // Le damos ambas opciones al jugador
-                        textoAviso.text = "Q para TIRAR | R para CERRAR shawarma";
-
-                        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
-                        {
-                            plato.TirarShawarma();
-                        }
-                        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
-                        {
-                            plato.CerrarShawarma(inventario); // Lo envolvemos y lo agarramos
-                        }
+                        MostrarTexto("Q para TIRAR | R para CERRAR");
+                        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame) plato.TirarShawarma();
+                        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame) plato.CerrarShawarma(inventario);
                     }
-                    else
-                    {
-                        textoAviso.text = "Pan vacío listo para armar";
-                    }
+                    else MostrarTexto("Pan vacío listo para armar");
                 }
             }
-
             // CASO E: Miramos a un Cliente
             else if (cliente != null)
             {
-                // Si el cliente recién llega
                 if (cliente.estadoActual == Cliente.Estado.EsperandoAtencion)
                 {
-                    
-                    textoAviso.text = "Presiona R para aceptar pedido: " + cliente.ObtenerTextoPedido();
-
+                    // Usamos la función combinada para mostrar la tecla y lo que pide
+                    MostrarIconoYTexto(iconoTeclaR, "Pedido: " + cliente.ObtenerTextoPedido());
                     if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                     {
                         cliente.AceptarPedido();
-                  //      cliente.clienteQueue.UpdatePosition();
                     }
                 }
-                // Si ya le tomaste el pedido y espera su comida
                 else if (cliente.estadoActual == Cliente.Estado.EsperandoComida)
                 {
                     if (inventario.ObtenerNombreActual() == "Shawarma")
                     {
-                        textoAviso.text = "Presiona R para entregar el Shawarma";
-
+                        MostrarIconoYTexto(iconoTeclaR, "Entregar Shawarma");
                         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                         {
-                            cliente.RecibirComida(inventario); // Te lo saca de la mano y destruye al cliente
+                            cliente.RecibirComida(inventario);
                         }
                     }
-                    else
-                    {
-                        textoAviso.text = "Esperando: " + cliente.ObtenerTextoPedido();
-                    }
+                    else MostrarTexto("Esperando: " + cliente.ObtenerTextoPedido());
                 }
             }
-
-
-
             // CASO F: Miramos una mesa vacía 
             else
             {
                 if (inventario.TieneHerramientas())
                 {
-                    textoAviso.text = "Presiona E para apoyar";
-
+                    MostrarIcono(iconoTeclaE);
                     if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                     {
                         Vector3 posicionApoyo = hit.point;
                         inventario.SoltarHerramientaActual(posicionApoyo);
                     }
                 }
-                else textoAviso.text = "";
+                else OcultarTodo();
             }
-
         }
-        else textoAviso.text = "";
-
-       
-    
-    
-    
+        else OcultarTodo();
     }
 
+    // --- FUNCIONES AUXILIARES PARA CONTROLAR LA PANTALLA ---
+
+    void MostrarIcono(Sprite icono)
+    {
+        if (iconoInteraccionEnPantalla != null)
+        {
+            iconoInteraccionEnPantalla.sprite = icono;
+            iconoInteraccionEnPantalla.enabled = true;
+        }
+        if (textoAviso != null) textoAviso.text = "";
+    }
+
+    void MostrarTexto(string mensaje)
+    {
+        if (iconoInteraccionEnPantalla != null) iconoInteraccionEnPantalla.enabled = false;
+        if (textoAviso != null) textoAviso.text = mensaje;
+    }
+
+    void MostrarIconoYTexto(Sprite icono, string mensaje)
+    {
+        if (iconoInteraccionEnPantalla != null)
+        {
+            iconoInteraccionEnPantalla.sprite = icono;
+            iconoInteraccionEnPantalla.enabled = true;
+        }
+        if (textoAviso != null) textoAviso.text = mensaje;
+    }
+
+    void OcultarTodo()
+    {
+        if (iconoInteraccionEnPantalla != null) iconoInteraccionEnPantalla.enabled = false;
+        if (textoAviso != null) textoAviso.text = "";
+    }
 }
