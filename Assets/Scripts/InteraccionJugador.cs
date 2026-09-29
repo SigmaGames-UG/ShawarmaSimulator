@@ -116,16 +116,22 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
             // CASO D: Miramos el Plato de Armado
+            // CASO D: Miramos el Plato de Armado
             else if (plato != null)
             {
                 if (inventario.TieneHerramientas())
                 {
                     if (plato.PuedeAgregar())
                     {
-                        MostrarIcono(iconoTeclaE);
+                        // 1. Obtenemos el nombre de lo que tenés en la mano
+                        string ingrediente = inventario.ObtenerNombreActual();
+
+                        // 2. Mostramos el ícono de la E + el texto aclaratorio
+                        MostrarIconoYTexto(iconoTeclaE, "Agregar " + ingrediente + " al shawarma");
+
                         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
-                            plato.AgregarIngrediente(inventario.ObtenerNombreActual());
+                            plato.AgregarIngrediente(ingrediente);
                             inventario.ConsumirHerramientaActual();
                         }
                     }
@@ -168,21 +174,47 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
             // CASO F: Miramos una mesa vacía 
+            // CASO F: Miramos una superficie cualquiera (Mesa, piso, pared)
             else
             {
                 if (inventario.TieneHerramientas())
                 {
-                    MostrarIcono(iconoTeclaE);
-                    if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                    // Si la superficie mira hacia arriba (es una mesa o el piso)
+                    if (hit.normal.y > 0.7f)
                     {
-                        Vector3 posicionApoyo = hit.point;
-                        inventario.SoltarHerramientaActual(posicionApoyo);
+                        MostrarIconoYTexto(iconoTeclaE, "Apoyar");
+
+                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                        {
+                            // Le sumamos 0.2 en altura (Y) para soltarlo desde apenitas arriba
+                            // Así la gravedad lo hace caer y asentarse perfectamente.
+                            Vector3 posicionApoyo = hit.point + new Vector3(0, 0.2f, 0);
+                            inventario.SoltarHerramientaActual(posicionApoyo);
+                        }
+                    }
+                    else // Si hit.normal.y es menor a 0.7, es una pared o techo
+                    {
+                        MostrarTexto("No puedes apoyar esto en la pared");
                     }
                 }
-                else OcultarTodo();
-            }
+                else // Si el rayo láser no choca contra NADA (miramos al aire vacío)
+                {
+                    OcultarTodo();
+
+                    // Agregamos la opción de soltar al vacío con la tecla G
+                    if (inventario.TieneHerramientas())
+                    {
+                        MostrarTexto("Presiona G para tirar al piso");
+                        if (Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
+                        {
+                            // Lo suelta un poco adelante de tu cámara para que caiga por gravedad
+                            Vector3 posicionCaida = camara.position + camara.forward * 0.8f;
+                            inventario.SoltarHerramientaActual(posicionCaida);
+                        }
+                    }
+                }
         }
-        else OcultarTodo();
+        }
     }
 
     // --- FUNCIONES AUXILIARES PARA CONTROLAR LA PANTALLA ---

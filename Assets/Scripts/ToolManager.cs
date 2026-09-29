@@ -23,14 +23,13 @@ public class ToolManager : MonoBehaviour
         toolModels = new SimpleArrayList<GameObject>(1);
         ActualizarPantalla();
     }
-    
+
     public string ObtenerNombreActual()
     {
         if (tools.Count > 0) return tools.Get(0);
         return "";
     }
 
-    
     public void ConsumirHerramientaActual()
     {
         if (tools.Count == 0) return;
@@ -59,12 +58,10 @@ public class ToolManager : MonoBehaviour
         objetoFisico.transform.SetParent(posicionMano, false);
 
         ItemRecogible item = objetoFisico.GetComponent<ItemRecogible>();
-
         if (item != null)
         {
             objetoFisico.transform.localPosition = item.posicionEnMano;
-            objetoFisico.transform.localRotation =
-                Quaternion.Euler(item.rotacionEnMano);
+            objetoFisico.transform.localRotation = Quaternion.Euler(item.rotacionEnMano);
         }
         else
         {
@@ -75,21 +72,16 @@ public class ToolManager : MonoBehaviour
         // Conservamos el tamaño original
         objetoFisico.transform.localScale = escalaOriginal;
 
+        // Apagamos colisiones y físicas mientras está en la mano
         Collider col = objetoFisico.GetComponent<Collider>();
-
-        if (col != null)
-        {
-            col.enabled = false;
-        }
+        if (col != null) col.enabled = false;
 
         Rigidbody rb = objetoFisico.GetComponent<Rigidbody>();
-
         if (rb != null)
         {
             rb.isKinematic = true;
             rb.useGravity = false;
         }
-
 
         ActualizarPantalla();
     }
@@ -105,29 +97,34 @@ public class ToolManager : MonoBehaviour
 
         GameObject objetoEnMano = toolModels.Get(0);
 
-     
-        objetoEnMano.transform.SetParent(null);
+        // 1. Lo desvinculamos de la mano con "true" para que no herede tamaños raros
+        objetoEnMano.transform.SetParent(null, true);
 
-        
         objetoEnMano.transform.rotation = rotacionOriginal;
         objetoEnMano.transform.localScale = escalaOriginal;
 
-        
+        // 2. Volvemos a prender las colisiones
         Collider col = objetoEnMano.GetComponent<Collider>();
         if (col != null) col.enabled = true;
 
-       
-        
-        float alturaParaSubir = 60f;
+        // 3. ¡VOLVEMOS A PRENDER LA FÍSICA Y LA GRAVEDAD!
+        Rigidbody rb = objetoEnMano.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true; // Esto es lo que faltaba para que caiga
+        }
+
+        // 4. Calculamos un poquito de altura para que caiga limpiamente
+        float alturaParaSubir = 0.2f; // Valor seguro por si no hay collider
         if (col != null)
         {
             alturaParaSubir = col.bounds.extents.y;
         }
 
-        
-        objetoEnMano.transform.position = posicionExactaMesa + new Vector3(0, alturaParaSubir, 0);
+        objetoEnMano.transform.position = posicionExactaMesa + new Vector3(0, alturaParaSubir + 0.1f, 0);
 
-        
+        // 5. Vaciamos la mano
         tools.RemoveAt(0);
         toolSprites.RemoveAt(0);
         toolModels.RemoveAt(0);
@@ -137,7 +134,6 @@ public class ToolManager : MonoBehaviour
 
     void Update()
     {
-        // El sistema de abrir la caja con la T que ya andaba bárbaro
         if (Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame && tools.Count > 0)
         {
             GameObject objetoEnMano = toolModels.Get(0);

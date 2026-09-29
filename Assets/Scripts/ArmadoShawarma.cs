@@ -30,9 +30,16 @@ public class ArmadoShawarma : MonoBehaviour
 
         switch (nombreIngredienteEnMano)
         {
-            case "Carne": prefabAUsar = prefabCarnePlana; break;
-            case "Lechuga": prefabAUsar = prefabLechugaPlana; break;
-            case "Ketchup": prefabAUsar = prefabKetchupPlano; break;
+            case "Carne":
+                prefabAUsar = prefabCarnePlana;
+                break;
+            case "Lechuga":
+            case "Porcion Lechuga": 
+                prefabAUsar = prefabLechugaPlana;
+                break;
+            case "Ketchup":
+                prefabAUsar = prefabKetchupPlano;
+                break;
             default:
                 Debug.LogWarning("Aún no configuraste un modelo plano para: " + nombreIngredienteEnMano);
                 return;
@@ -41,10 +48,16 @@ public class ArmadoShawarma : MonoBehaviour
         if (prefabAUsar == null) return;
 
         Vector3 posicionAlta = puntoDeApoyo.position + new Vector3(0, pilaIngredientes.Count * alturaPorIngrediente, 0);
+        
+        
         GameObject nuevoIngrediente = Instantiate(prefabAUsar, posicionAlta, Quaternion.identity);
-        nuevoIngrediente.transform.SetParent(puntoDeApoyo);
 
+        nuevoIngrediente.transform.SetParent(puntoDeApoyo, true);
+
+      
         pilaIngredientes.Push(nuevoIngrediente);
+
+       
     }
 
     public void TirarShawarma()
