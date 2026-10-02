@@ -34,37 +34,48 @@ public class InteraccionJugador : MonoBehaviour
             {
                 if (!baseTrompo.tieneTrompo)
                 {
+                    // ESTADO 1: La máquina no tiene absolutamente nada
                     if (inventario.ObtenerNombreActual() == "Trompo")
                     {
-                        MostrarIcono(iconoTeclaE);
+                        MostrarIconoYTexto(iconoTeclaE, "Colocar Trompo de carne");
                         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             baseTrompo.ColocarTrompo();
                             inventario.ConsumirHerramientaActual();
                         }
                     }
-                    else MostrarTexto("Máquina de Trompo (Vacía)");
+                    else
+                    {
+                        // ¡Acá faltaba este else!
+                        MostrarTexto("Máquina vacía (Necesitas un bloque de carne)");
+                    }
                 }
                 else
                 {
+                    // ESTADO 2: La máquina está funcionando y tiene carne para cortar
                     if (baseTrompo.usosActuales > 0)
                     {
                         if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
                         else
                         {
-                            MostrarIcono(iconoTeclaR);
+                            // Agregamos la función YTexto para que avise cuánta carne queda
+                            MostrarIconoYTexto(iconoTeclaR, "Cortar Carne (" + baseTrompo.usosActuales + "/7)");
+
                             if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                             {
                                 baseTrompo.SacarCarne(inventario);
                             }
                         }
                     }
+                    // ESTADO 3: Nos quedamos sin carne, solo queda el fierro girando
                     else
                     {
                         if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
                         else
                         {
-                            MostrarIcono(iconoTeclaE);
+                            // ¡ACÁ VA EL CARTEL QUE QUERÍAS!
+                            MostrarIconoYTexto(iconoTeclaE, "Falta Carne. Presiona E para quitar el fierro");
+
                             if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                             {
                                 baseTrompo.LimpiarTrompo();
