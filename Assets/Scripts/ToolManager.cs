@@ -55,7 +55,8 @@ public class ToolManager : MonoBehaviour
         escalaOriginal = objetoFisico.transform.localScale;
 
         // Lo colocamos en la mano
-        objetoFisico.transform.SetParent(posicionMano, false);
+        // 1. Usamos TRUE para que el objeto no se vuelva gigante o enano al pegarse a la mano
+        objetoFisico.transform.SetParent(posicionMano, true);
 
         ItemRecogible item = objetoFisico.GetComponent<ItemRecogible>();
         if (item != null)
@@ -69,18 +70,21 @@ public class ToolManager : MonoBehaviour
             objetoFisico.transform.localRotation = Quaternion.identity;
         }
 
-        // Conservamos el tamaño original
-        objetoFisico.transform.localScale = escalaOriginal;
+        // Ya no necesitamos forzar la escala porque SetParent(..., true) la protege
 
-        // Apagamos colisiones y físicas mientras está en la mano
-        Collider col = objetoFisico.GetComponent<Collider>();
-        if (col != null) col.enabled = false;
-
-        Rigidbody rb = objetoFisico.GetComponent<Rigidbody>();
-        if (rb != null)
+        // 2. Apagamos TODOS los colliders de la pieza y sus hijos (esto ya lo hacías bien)
+        Collider[] colliders = objetoFisico.GetComponentsInChildren<Collider>();
+        foreach (Collider c in colliders)
         {
-            rb.isKinematic = true;
-            rb.useGravity = false;
+            c.enabled = false;
+        }
+
+        // 3. ¡LA SOLUCIÓN AL BUG INCONTROLABLE! Apagamos TODOS los Rigidbodies
+        Rigidbody[] rbs = objetoFisico.GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody r in rbs)
+        {
+            r.isKinematic = true;
+            r.useGravity = false;
         }
 
         ActualizarPantalla();
@@ -103,25 +107,26 @@ public class ToolManager : MonoBehaviour
         objetoEnMano.transform.rotation = rotacionOriginal;
         objetoEnMano.transform.localScale = escalaOriginal;
 
-        // 2. Volvemos a prender las colisiones
-        Collider col = objetoEnMano.GetComponent<Collider>();
-        if (col != null) col.enabled = true;
+        // 2. Volvemos a prender las colisiones y calculamos la altura
+        Collider[] colliders = objetoEnMano.GetComponentsInChildren<Collider>();
+        float alturaParaSubir = 0.2f; // Lo declaramos UNA sola vez
 
-        // 3. ¡VOLVEMOS A PRENDER LA FÍSICA Y LA GRAVEDAD!
-        Rigidbody rb = objetoEnMano.GetComponent<Rigidbody>();
-        if (rb != null)
+        foreach (Collider c in colliders)
         {
-            rb.isKinematic = false;
-            rb.useGravity = true; // Esto es lo que faltaba para que caiga
+            c.enabled = true;
+            // Usamos el tamaño del primer collider que encuentre para calcular la altura
+            alturaParaSubir = c.bounds.extents.y;
         }
 
-        // 4. Calculamos un poquito de altura para que caiga limpiamente
-        float alturaParaSubir = 0.2f; // Valor seguro por si no hay collider
-        if (col != null)
+        // 3. ¡VOLVEMOS A PRENDER LA FÍSICA Y LA GRAVEDAD PARA TODO EL OBJETO!
+        Rigidbody[] rbs = objetoEnMano.GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody r in rbs)
         {
-            alturaParaSubir = col.bounds.extents.y;
+            r.isKinematic = false;
+            r.useGravity = true;
         }
 
+        // 4. Lo posicionamos usando la altura que ya calculamos arriba
         objetoEnMano.transform.position = posicionExactaMesa + new Vector3(0, alturaParaSubir + 0.1f, 0);
 
         // 5. Vaciamos la mano
@@ -152,7 +157,12 @@ public class ToolManager : MonoBehaviour
             }
         }
     }
-
+    
+    public GameObject ObtenerObjetoFisicoActual()
+    {
+        if (toolModels.Count > 0) return toolModels.Get(0);
+        return null;
+    }
     void ActualizarPantalla()
     {
         if (tools.Count == 0)
