@@ -1,6 +1,6 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI; // ¡Librería necesaria para controlar la Imagen!
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 public class InteraccionJugador : MonoBehaviour
@@ -10,35 +10,59 @@ public class InteraccionJugador : MonoBehaviour
     public ToolManager inventario;
 
     [Header("Interfaz Visual")]
-    public Image iconoInteraccionEnPantalla; // La nueva imagen del Canvas
-    public Sprite iconoTeclaE; // Tu asset para la tecla E
-    public Sprite iconoTeclaR; // Tu asset para la tecla R
-    public Sprite iconoManoBloqueada; // Opcional: Una cruz o mano tachada para "Manos ocupadas"
+    public Image iconoInteraccionEnPantalla;
+    public Sprite iconoTeclaE;
+    public Sprite iconoTeclaR;
+    public Sprite iconoManoBloqueada;
 
-    public TextMeshProUGUI textoAviso; // Lo conservamos para avisos combinados
+    public TextMeshProUGUI textoAviso;
 
     void Update()
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(camara.position, camara.forward, out hit, distanciaInteraccion))
+        if (Physics.Raycast(
+            camara.position,
+            camara.forward,
+            out hit,
+            distanciaInteraccion))
         {
-            ItemRecogible item = hit.collider.GetComponentInParent<ItemRecogible>();
-            BaseTrompo baseTrompo = hit.collider.GetComponentInParent<BaseTrompo>();
-            BandejaLechuga bandeja = hit.collider.GetComponentInParent<BandejaLechuga>();
-            ArmadoShawarma plato = hit.collider.GetComponentInParent<ArmadoShawarma>();
-            Cliente cliente = hit.collider.GetComponentInParent<Cliente>();
+            ItemRecogible item =
+                hit.collider.GetComponentInParent<ItemRecogible>();
 
-            // CASO A: Miramos la máquina del Trompo
+            BaseTrompo baseTrompo =
+                hit.collider.GetComponentInParent<BaseTrompo>();
+
+            BandejaLechuga bandeja =
+                hit.collider.GetComponentInParent<BandejaLechuga>();
+
+            ArmadoShawarma plato =
+                hit.collider.GetComponentInParent<ArmadoShawarma>();
+
+            Cliente cliente =
+                hit.collider.GetComponentInParent<Cliente>();
+
+            RadioMusica radio =
+                hit.collider.GetComponentInParent<RadioMusica>();
+
+
+            // =====================================================
+            // CASO A: MÁQUINA DEL TROMPO
+            // =====================================================
+
             if (baseTrompo != null)
             {
                 if (!baseTrompo.tieneTrompo)
                 {
-                    // ESTADO 1: La máquina no tiene absolutamente nada
                     if (inventario.ObtenerNombreActual() == "Trompo")
                     {
-                        MostrarIconoYTexto(iconoTeclaE, "Colocar Trompo de carne");
-                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                        MostrarIconoYTexto(
+                            iconoTeclaE,
+                            "Colocar Trompo de carne"
+                        );
+
+                        if (Keyboard.current != null &&
+                            Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             baseTrompo.ColocarTrompo();
                             inventario.ConsumirHerramientaActual();
@@ -46,37 +70,50 @@ public class InteraccionJugador : MonoBehaviour
                     }
                     else
                     {
-                        // ¡Acá faltaba este else!
-                        MostrarTexto("Máquina vacía (Necesitas un bloque de carne)");
+                        MostrarTexto(
+                            "Máquina vacía (Necesitas un bloque de carne)"
+                        );
                     }
                 }
                 else
                 {
-                    // ESTADO 2: La máquina está funcionando y tiene carne para cortar
                     if (baseTrompo.usosActuales > 0)
                     {
-                        if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
+                        if (inventario.TieneHerramientas())
+                        {
+                            MostrarIcono(iconoManoBloqueada);
+                        }
                         else
                         {
-                            // Agregamos la función YTexto para que avise cuánta carne queda
-                            MostrarIconoYTexto(iconoTeclaR, "Cortar Carne (" + baseTrompo.usosActuales + "/7)");
+                            MostrarIconoYTexto(
+                                iconoTeclaR,
+                                "Cortar Carne (" +
+                                baseTrompo.usosActuales +
+                                "/7)"
+                            );
 
-                            if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+                            if (Keyboard.current != null &&
+                                Keyboard.current.rKey.wasPressedThisFrame)
                             {
                                 baseTrompo.SacarCarne(inventario);
                             }
                         }
                     }
-                    // ESTADO 3: Nos quedamos sin carne, solo queda el fierro girando
                     else
                     {
-                        if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
+                        if (inventario.TieneHerramientas())
+                        {
+                            MostrarIcono(iconoManoBloqueada);
+                        }
                         else
                         {
-                            // ¡ACÁ VA EL CARTEL QUE QUERÍAS!
-                            MostrarIconoYTexto(iconoTeclaE, "Falta Carne. Presiona E para quitar el fierro");
+                            MostrarIconoYTexto(
+                                iconoTeclaE,
+                                "Falta Carne. Presiona E para quitar el fierro"
+                            );
 
-                            if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                            if (Keyboard.current != null &&
+                                Keyboard.current.eKey.wasPressedThisFrame)
                             {
                                 baseTrompo.LimpiarTrompo();
                             }
@@ -84,7 +121,12 @@ public class InteraccionJugador : MonoBehaviour
                     }
                 }
             }
-            // CASO B: Miramos la Bandeja de Lechuga
+
+
+            // =====================================================
+            // CASO B: BANDEJA DE LECHUGA
+            // =====================================================
+
             else if (bandeja != null)
             {
                 if (bandeja.porcionesActuales == 0)
@@ -92,143 +134,268 @@ public class InteraccionJugador : MonoBehaviour
                     if (inventario.ObtenerNombreActual() == "Lechuga")
                     {
                         MostrarIcono(iconoTeclaE);
-                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+
+                        if (Keyboard.current != null &&
+                            Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             bandeja.LlenarBandeja();
                             inventario.ConsumirHerramientaActual();
                         }
                     }
-                    else MostrarTexto("Bandeja de Lechuga (Vacía)");
+                    else
+                    {
+                        MostrarTexto(
+                            "Bandeja de Lechuga (Vacía)"
+                        );
+                    }
                 }
                 else
                 {
-                    if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
+                    if (inventario.TieneHerramientas())
+                    {
+                        MostrarIcono(iconoManoBloqueada);
+                    }
                     else
                     {
                         MostrarIcono(iconoTeclaR);
-                        if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+
+                        if (Keyboard.current != null &&
+                            Keyboard.current.rKey.wasPressedThisFrame)
                         {
                             bandeja.SacarPorcion(inventario);
                         }
                     }
                 }
             }
-            // CASO C: Miramos un aderezo, caja, o ítem suelto
-            else if (item != null)
+
+
+            // =====================================================
+            // CASO C: RADIO
+            // =====================================================
+
+            else if (radio != null)
             {
-                if (inventario.TieneHerramientas()) MostrarIcono(iconoManoBloqueada);
+                if (!radio.EstaEncendida())
+                {
+                    MostrarIconoYTexto(
+                        iconoTeclaE,
+                        "Encender radio"
+                    );
+
+                    if (Keyboard.current != null &&
+                        Keyboard.current.eKey.wasPressedThisFrame)
+                    {
+                        radio.EncenderOCambiarEstacion();
+                    }
+                }
                 else
                 {
-                    MostrarIcono(iconoTeclaE);
-                    if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                    MostrarIconoYTexto(
+                        iconoTeclaE,
+                        "E: Cambiar estación | T: Apagar"
+                    );
+
+                    // E cambia de estación
+                    if (Keyboard.current != null &&
+                        Keyboard.current.eKey.wasPressedThisFrame)
                     {
-                        inventario.AgregarHerramienta(item.nombreHerramienta, item.iconoHerramienta, item.gameObject);
+                        radio.EncenderOCambiarEstacion();
+                    }
+
+                    // T apaga la radio
+                    if (Keyboard.current != null &&
+                        Keyboard.current.tKey.wasPressedThisFrame)
+                    {
+                        radio.Apagar();
                     }
                 }
             }
-            // CASO D: Miramos el Plato de Armado
-            // CASO D: Miramos el Plato de Armado
+            // CASO D: ITEM RECOGIBLE
+
+            else if (item != null)
+            {
+                if (inventario.TieneHerramientas())
+                {
+                    MostrarIcono(iconoManoBloqueada);
+                }
+                else
+                {
+                    MostrarIcono(iconoTeclaE);
+
+                    if (Keyboard.current != null &&
+                        Keyboard.current.eKey.wasPressedThisFrame)
+                    {
+                        inventario.AgregarHerramienta(
+                            item.nombreHerramienta,
+                            item.iconoHerramienta,
+                            item.gameObject
+                        );
+                    }
+                }
+            }
+
+            // CASO E: PLATO DE ARMADO
+
             else if (plato != null)
             {
                 if (inventario.TieneHerramientas())
                 {
                     if (plato.PuedeAgregar())
                     {
-                        // 1. Obtenemos el nombre de lo que tenés en la mano
-                        string ingrediente = inventario.ObtenerNombreActual();
+                        string ingrediente =
+                            inventario.ObtenerNombreActual();
 
-                        // 2. Mostramos el ícono de la E + el texto aclaratorio
-                        MostrarIconoYTexto(iconoTeclaE, "Agregar " + ingrediente + " al shawarma");
+                        MostrarIconoYTexto(
+                            iconoTeclaE,
+                            "Agregar " +
+                            ingrediente +
+                            " al shawarma"
+                        );
 
-                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                        if (Keyboard.current != null &&
+                            Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             plato.AgregarIngrediente(ingrediente);
                             inventario.ConsumirHerramientaActual();
                         }
                     }
-                    else MostrarTexto("El shawarma está lleno");
+                    else
+                    {
+                        MostrarTexto(
+                            "El shawarma está lleno"
+                        );
+                    }
                 }
                 else
                 {
                     if (plato.CantidadIngredientes() > 0)
                     {
-                        MostrarTexto("Q para TIRAR | R para CERRAR");
-                        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame) plato.TirarShawarma();
-                        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame) plato.CerrarShawarma(inventario);
+                        MostrarTexto(
+                            "Q para TIRAR | R para CERRAR"
+                        );
+
+                        if (Keyboard.current != null &&
+                            Keyboard.current.qKey.wasPressedThisFrame)
+                        {
+                            plato.TirarShawarma();
+                        }
+                        else if (
+                            Keyboard.current != null &&
+                            Keyboard.current.rKey.wasPressedThisFrame)
+                        {
+                            plato.CerrarShawarma(inventario);
+                        }
                     }
-                    else MostrarTexto("Pan vacío listo para armar");
+                    else
+                    {
+                        MostrarTexto(
+                            "Pan vacío listo para armar"
+                        );
+                    }
                 }
             }
-            // CASO E: Miramos a un Cliente
+
+
+            // CASO F: CLIENTE
+
+
             else if (cliente != null)
             {
-                if (cliente.estadoActual == Cliente.Estado.EsperandoAtencion)
+                if (cliente.estadoActual ==
+                    Cliente.Estado.EsperandoAtencion)
                 {
-                    // Usamos la función combinada para mostrar la tecla y lo que pide
-                    MostrarIconoYTexto(iconoTeclaR, "Pedido: " + cliente.ObtenerTextoPedido());
-                    if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+                    MostrarIconoYTexto(
+                        iconoTeclaR,
+                        "Pedido: " +
+                        cliente.ObtenerTextoPedido()
+                    );
+
+                    if (Keyboard.current != null &&
+                        Keyboard.current.rKey.wasPressedThisFrame)
                     {
                         cliente.AceptarPedido();
                     }
                 }
-                else if (cliente.estadoActual == Cliente.Estado.EsperandoComida)
+                else if (
+                    cliente.estadoActual ==
+                    Cliente.Estado.EsperandoComida)
                 {
                     if (inventario.ObtenerNombreActual() == "Shawarma")
                     {
-                        MostrarIconoYTexto(iconoTeclaR, "Entregar Shawarma");
-                        if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+                        MostrarIconoYTexto(
+                            iconoTeclaR,
+                            "Entregar Shawarma"
+                        );
+
+                        if (Keyboard.current != null &&
+                            Keyboard.current.rKey.wasPressedThisFrame)
                         {
                             cliente.RecibirComida(inventario);
                         }
                     }
-                    else MostrarTexto("Esperando: " + cliente.ObtenerTextoPedido());
+                    else
+                    {
+                        MostrarTexto(
+                            "Esperando: " +
+                            cliente.ObtenerTextoPedido()
+                        );
+                    }
                 }
             }
-            // CASO F: Miramos una mesa vacía 
-            // CASO F: Miramos una superficie cualquiera (Mesa, piso, pared)
+
+
+          
+            // CASO G: SUPERFICIE
+          
+
             else
             {
                 if (inventario.TieneHerramientas())
                 {
-                    // Si la superficie mira hacia arriba (es una mesa o el piso)
+                    // Mesa o piso
                     if (hit.normal.y > 0.7f)
                     {
-                        MostrarIconoYTexto(iconoTeclaE, "Apoyar");
+                        MostrarIconoYTexto(
+                            iconoTeclaE,
+                            "Apoyar"
+                        );
 
-                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                        if (Keyboard.current != null &&
+                            Keyboard.current.eKey.wasPressedThisFrame)
                         {
-                            // Le sumamos 0.2 en altura (Y) para soltarlo desde apenitas arriba
-                            // Así la gravedad lo hace caer y asentarse perfectamente.
-                            Vector3 posicionApoyo = hit.point + new Vector3(0, 0.2f, 0);
-                            inventario.SoltarHerramientaActual(posicionApoyo);
+                            Vector3 posicionApoyo =
+                                hit.point +
+                                new Vector3(0, 0.2f, 0);
+
+                            inventario.SoltarHerramientaActual(
+                                posicionApoyo
+                            );
                         }
                     }
-                    else // Si hit.normal.y es menor a 0.7, es una pared o techo
+
+                    // Pared o techo
+                    else
                     {
-                        MostrarTexto("No puedes apoyar esto en la pared");
+                        MostrarTexto(
+                            "No puedes apoyar esto en la pared"
+                        );
                     }
                 }
-                else // Si el rayo láser no choca contra NADA (miramos al aire vacío)
+                else
                 {
                     OcultarTodo();
-
-                    // Agregamos la opción de soltar al vacío con la tecla G
-                    if (inventario.TieneHerramientas())
-                    {
-                        MostrarTexto("Presiona G para tirar al piso");
-                        if (Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
-                        {
-                            // Lo suelta un poco adelante de tu cámara para que caiga por gravedad
-                            Vector3 posicionCaida = camara.position + camara.forward * 0.8f;
-                            inventario.SoltarHerramientaActual(posicionCaida);
-                        }
-                    }
                 }
+            }
         }
+        else
+        {
+            OcultarTodo();
         }
     }
-
-    // --- FUNCIONES AUXILIARES PARA CONTROLAR LA PANTALLA ---
+    
+    
+    // FUNCIONES AUXILIARES DE INTERFAZ
+    
 
     void MostrarIcono(Sprite icono)
     {
@@ -237,28 +404,55 @@ public class InteraccionJugador : MonoBehaviour
             iconoInteraccionEnPantalla.sprite = icono;
             iconoInteraccionEnPantalla.enabled = true;
         }
-        if (textoAviso != null) textoAviso.text = "";
+
+        if (textoAviso != null)
+        {
+            textoAviso.text = "";
+        }
     }
+
 
     void MostrarTexto(string mensaje)
     {
-        if (iconoInteraccionEnPantalla != null) iconoInteraccionEnPantalla.enabled = false;
-        if (textoAviso != null) textoAviso.text = mensaje;
+        if (iconoInteraccionEnPantalla != null)
+        {
+            iconoInteraccionEnPantalla.enabled = false;
+        }
+
+        if (textoAviso != null)
+        {
+            textoAviso.text = mensaje;
+        }
     }
 
-    void MostrarIconoYTexto(Sprite icono, string mensaje)
+
+    void MostrarIconoYTexto(
+        Sprite icono,
+        string mensaje)
     {
         if (iconoInteraccionEnPantalla != null)
         {
             iconoInteraccionEnPantalla.sprite = icono;
             iconoInteraccionEnPantalla.enabled = true;
         }
-        if (textoAviso != null) textoAviso.text = mensaje;
+
+        if (textoAviso != null)
+        {
+            textoAviso.text = mensaje;
+        }
     }
+
 
     void OcultarTodo()
     {
-        if (iconoInteraccionEnPantalla != null) iconoInteraccionEnPantalla.enabled = false;
-        if (textoAviso != null) textoAviso.text = "";
+        if (iconoInteraccionEnPantalla != null)
+        {
+            iconoInteraccionEnPantalla.enabled = false;
+        }
+
+        if (textoAviso != null)
+        {
+            textoAviso.text = "";
+        }
     }
 }
