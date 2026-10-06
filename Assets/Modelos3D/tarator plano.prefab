@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2329415595468737199}
   - component: {fileID: 5754743882776248650}
   m_Layer: 0
-  m_Name: kechu plano
+  m_Name: tarator plano
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f6b68ae9daa0c5840b74b325db70c51a, type: 2}
+  - {fileID: 2100000, guid: ee9ef9423388fde49bf6f9017d1d1431, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
