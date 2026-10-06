@@ -32,7 +32,6 @@ public class CarMovement : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
     private void OnTriggerEnter(Collider other)
     {
         PlayerDeath jugador =
@@ -40,7 +39,15 @@ public class CarMovement : MonoBehaviour
 
         if (jugador != null)
         {
-            jugador.Morir();
+            Vector3 direccionGolpe =
+                jugador.transform.position
+                - transform.position;
+
+            direccionGolpe.y = 0f;
+
+            jugador.Morir(direccionGolpe);
         }
+
+
     }
 }

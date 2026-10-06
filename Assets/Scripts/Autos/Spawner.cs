@@ -20,13 +20,13 @@ public class CarSpawner : MonoBehaviour
 
     private void Awake()
     {
-        // Elegimos implementación ESTÁTICA.
+        //implementación ESTÁTICA.
         autosDictionary =
             new SimpleArrayDictionary<string, CarData>(
                 autos.Length
             );
 
-        // Cargamos los datos en nuestro Dictionary.
+        // Cargamos los datos
         for (int i = 0; i < autos.Length; i++)
         {
             autosDictionary.Add(
@@ -35,7 +35,6 @@ public class CarSpawner : MonoBehaviour
             );
         }
 
-        // Utilizamos otra de las funciones del TDA.
         idsAutos = autosDictionary.Keys();
     }
 
