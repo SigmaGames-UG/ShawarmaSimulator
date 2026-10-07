@@ -30,6 +30,38 @@ public class ToolManager : MonoBehaviour
         return "";
     }
 
+    public void UsarHerramientaActual()
+    {
+        if (tools.Count == 0)
+            return;
+
+        GameObject objetoActual = toolModels.Get(0);
+
+        AderezoUsable aderezo =
+            objetoActual.GetComponentInChildren<AderezoUsable>();
+
+        // Si es un aderezo
+        if (aderezo != null)
+        {
+            bool pudoUsarse = aderezo.Usar();
+
+            if (!pudoUsarse)
+                return;
+
+            // Si gastamos el último uso,
+            // destruimos la botella
+            if (aderezo.EstaVacio())
+            {
+                ConsumirHerramientaActual();
+            }
+        }
+
+        // Si NO es un aderezo (carne, lechuga, etc.)
+        else
+        {
+            ConsumirHerramientaActual();
+        }
+    }
     public void ConsumirHerramientaActual()
     {
         if (tools.Count == 0) return;

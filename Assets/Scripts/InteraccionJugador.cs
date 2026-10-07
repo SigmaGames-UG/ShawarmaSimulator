@@ -45,10 +45,7 @@ public class InteraccionJugador : MonoBehaviour
             RadioMusica radio =
                 hit.collider.GetComponentInParent<RadioMusica>();
 
-
-            // =====================================================
             // CASO A: MÁQUINA DEL TROMPO
-            // =====================================================
 
             if (baseTrompo != null)
             {
@@ -122,10 +119,7 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-
-            // =====================================================
             // CASO B: BANDEJA DE LECHUGA
-            // =====================================================
 
             else if (bandeja != null)
             {
@@ -169,9 +163,8 @@ public class InteraccionJugador : MonoBehaviour
             }
 
 
-            // =====================================================
             // CASO C: RADIO
-            // =====================================================
+            
 
             else if (radio != null)
             {
@@ -256,7 +249,8 @@ public class InteraccionJugador : MonoBehaviour
                             Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             plato.AgregarIngrediente(ingrediente);
-                            inventario.ConsumirHerramientaActual();
+
+                            inventario.UsarHerramientaActual();
                         }
                     }
                     else

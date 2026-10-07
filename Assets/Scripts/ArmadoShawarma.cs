@@ -2,17 +2,21 @@ using UnityEngine;
 
 public class ArmadoShawarma : MonoBehaviour
 {
-    // Una pila para los modelos 3D y otra pila paralela para los nombres (Strings)
-    private ISimpleStack<GameObject> pilaIngredientes = new SimpleArrayStack<GameObject>(10);
-    private ISimpleStack<string> nombresIngredientes = new SimpleArrayStack<string>(10);
+    private ISimpleStack<GameObject> pilaIngredientes =
+        new SimpleArrayStack<GameObject>(10);
+
+    private ISimpleStack<string> nombresIngredientes =
+        new SimpleArrayStack<string>(10);
 
     public Transform puntoDeApoyo;
     public float alturaPorIngrediente = 0.05f;
 
-    [Header("Futuros Assets (Ingredientes Cortados/Planos)")]
+    [Header("Ingredientes Cortados/Planos")]
     public GameObject prefabCarnePlana;
     public GameObject prefabLechugaPlana;
     public GameObject prefabKetchupPlano;
+    public GameObject prefabMayoPlano;
+    public GameObject prefabtaratorplano;
 
     [Header("Shawarma Terminado")]
     public GameObject prefabShawarmaTerminado;
@@ -36,18 +40,35 @@ public class ArmadoShawarma : MonoBehaviour
             case "Carne":
                 prefabAUsar = prefabCarnePlana;
                 break;
+
             case "Lechuga":
             case "Porcion Lechuga":
                 prefabAUsar = prefabLechugaPlana;
-                nombreDefinitivo = "Lechuga"; // Normalizamos el nombre para el cliente
+                nombreDefinitivo = "Lechuga";
                 break;
+
             case "Ketchup":
                 prefabAUsar = prefabKetchupPlano;
                 break;
+
+            case "Mayonesa":
+                prefabAUsar = prefabMayoPlano;
+                break;
+
+            case "Tarator":
+                prefabAUsar = prefabtaratorplano;
+                break;
+
+
             default:
-                Debug.LogWarning("Aún no configuraste un modelo plano para: " + nombreIngredienteEnMano);
+                Debug.LogWarning(
+                    "Aún no configuraste un modelo plano para: "
+                    + nombreIngredienteEnMano
+                );
                 return;
         }
+
+
 
         if (prefabAUsar == null) return;
 
@@ -60,6 +81,8 @@ public class ArmadoShawarma : MonoBehaviour
         pilaIngredientes.Push(nuevoIngrediente);
         nombresIngredientes.Push(nombreDefinitivo);
     }
+
+
 
     public void TirarShawarma()
     {
@@ -110,4 +133,6 @@ public class ArmadoShawarma : MonoBehaviour
     {
         return pilaIngredientes.Count;
     }
+
+
 }
