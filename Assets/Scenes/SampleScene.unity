@@ -13815,13 +13815,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f07a3a3650177f4fb03b9d5cd50af30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDeath
-  fuerzaGolpe: 25
-  fuerzaVertical: 50
+  fuerzaGolpe: 15
+  fuerzaVertical: 20
   fuerzaGiro: 10
-  gravedadExtra: 70
-  velocidadMaximaCaida: 35
+  gravedadExtra: 150
+  velocidadMaximaCaida: 90
   tiempoMinimoDerribado: 1
-  velocidadParaLevantarse: 1.5
+  velocidadParaLevantarse: 2
   tiempoParaEnderezarse: 0.5
 --- !u!54 &2029399723
 Rigidbody:
