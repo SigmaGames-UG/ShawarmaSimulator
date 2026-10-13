@@ -78,6 +78,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1800a51e271a3e747847642e50331dc0, type: 3}
       insertIndex: -1
       addedObject: {fileID: -3076773670068773244}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1800a51e271a3e747847642e50331dc0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5615272825578875233}
   m_SourcePrefab: {fileID: 100100000, guid: 1800a51e271a3e747847642e50331dc0, type: 3}
 --- !u!1 &7276054517568729786 stripped
 GameObject:
@@ -113,3 +116,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DatosShawarma
   ingredientesContenidos: []
+--- !u!114 &5615272825578875233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7276054517568729786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19833cdf5e5c5f944a30bcae105e61b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AimGlow
+  outlineMaterial: {fileID: 2100000, guid: eeae389f2198a8e41b234c97c94f50f2, type: 2}
+  useEmission: 0
+  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  glowIntensity: 2

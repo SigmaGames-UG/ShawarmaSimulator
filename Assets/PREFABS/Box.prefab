@@ -85,6 +85,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c862cb87f60fe1a47b3f6dc388fff22f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9115422952977333798}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c862cb87f60fe1a47b3f6dc388fff22f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 312449398476179522}
   m_SourcePrefab: {fileID: 100100000, guid: c862cb87f60fe1a47b3f6dc388fff22f, type: 3}
 --- !u!1 &4689823786687189072 stripped
 GameObject:
@@ -143,3 +146,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.013086613, y: 0.006999999, z: 0.006999999}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &312449398476179522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4689823786687189072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19833cdf5e5c5f944a30bcae105e61b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AimGlow
+  outlineMaterial: {fileID: 2100000, guid: eeae389f2198a8e41b234c97c94f50f2, type: 2}
+  useEmission: 0
+  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  glowIntensity: 0.25

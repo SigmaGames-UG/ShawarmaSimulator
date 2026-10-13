@@ -6,7 +6,7 @@ public class Yahya : MonoBehaviour
     public float velocidad = 5f;
     public float gravedad = -9.81f; 
     [Header("Configuración de Cámara")]
-    public float sensibilidadMouse = 2f;
+    public float sensibilidadMouse = 0.75f;
     public Transform camaraJugador;
 
     private CharacterController controller;

@@ -62,6 +62,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0463b7abd0dd4a744916fb7063775119, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8151404224113785513}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0463b7abd0dd4a744916fb7063775119, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6754353204722910527}
   m_SourcePrefab: {fileID: 100100000, guid: 0463b7abd0dd4a744916fb7063775119, type: 3}
 --- !u!1 &815174167120018993 stripped
 GameObject:
@@ -97,3 +100,19 @@ MonoBehaviour:
   iconoHerramienta: {fileID: 0}
   posicionEnMano: {x: 0, y: 0, z: 0}
   rotacionEnMano: {x: 0, y: 0, z: 0}
+--- !u!114 &6754353204722910527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815174167120018993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19833cdf5e5c5f944a30bcae105e61b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AimGlow
+  outlineMaterial: {fileID: 2100000, guid: eeae389f2198a8e41b234c97c94f50f2, type: 2}
+  useEmission: 0
+  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  glowIntensity: 2

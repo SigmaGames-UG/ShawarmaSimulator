@@ -32,4 +32,16 @@ public class SimpleArrayList<T> : ISimpleList<T>
         count--;
         array[count] = default(T);
     }
+
+    public T[] ToArray()
+    {
+        T[] array = new T[Count];
+
+        for (int i = 0; i < Count; i++)
+        {
+            array[i] = Get(i);
+        }
+
+        return array;
+    }
 }

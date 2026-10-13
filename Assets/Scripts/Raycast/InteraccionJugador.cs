@@ -7,7 +7,9 @@ public class InteraccionJugador : MonoBehaviour
 {
     public Transform camara;
     public float distanciaInteraccion = 15f;
+    private float sphereCastWidth = 2.5f;
     public ToolManager inventario;
+    private AimGlow highlightedObject;
 
     [Header("Interfaz Visual")]
     public Image iconoInteraccionEnPantalla;
@@ -17,12 +19,26 @@ public class InteraccionJugador : MonoBehaviour
 
     public TextMeshProUGUI textoAviso;
 
+    void UpdateHighlight(AimGlow nuevoObjetivo)
+    {
+        if (highlightedObject == nuevoObjetivo)
+            return;
+
+        if (highlightedObject != null)
+            highlightedObject.SetGlow(false);
+
+        highlightedObject = nuevoObjetivo;
+
+        if (highlightedObject != null)
+            highlightedObject.SetGlow(true);
+    }
     void Update()
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(
+        if (Physics.SphereCast(
             camara.position,
+            sphereCastWidth,
             camara.forward,
             out hit,
             distanciaInteraccion))
@@ -44,6 +60,8 @@ public class InteraccionJugador : MonoBehaviour
 
             RadioMusica radio =
                 hit.collider.GetComponentInParent<RadioMusica>();
+            
+            UpdateHighlight(hit.collider.GetComponentInParent<AimGlow>());
 
             // CASO A: MÁQUINA DEL TROMPO
 
@@ -377,12 +395,14 @@ public class InteraccionJugador : MonoBehaviour
                 }
                 else
                 {
+                    UpdateHighlight(null);
                     OcultarTodo();
                 }
             }
         }
         else
         {
+            UpdateHighlight(null);
             OcultarTodo();
         }
     }

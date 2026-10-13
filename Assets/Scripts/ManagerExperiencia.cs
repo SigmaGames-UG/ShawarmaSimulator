@@ -9,7 +9,8 @@ public class ManagerExperiencia : MonoBehaviour
 
     [Header("Interfaz de Usuario")]
     public TextMeshProUGUI textoXP; // El casillero para arrastrar tu texto del Canvas
-
+    SimpleArrayList<IngredienteInfo> ingredienteList = new SimpleArrayList<IngredienteInfo>();
+    IngredienteInfo[] ingredienteArray;
     public ISimpleSet<string> ingredientesDesbloqueados = new SimpleArraySet<string>(10);
     private ISimplePriorityQueue<string> ingredientesBloqueados = new SimpleArrayPriorityQueue<string>();
 
@@ -26,6 +27,19 @@ public class ManagerExperiencia : MonoBehaviour
         ingredientesBloqueados.Enqueue("Ketchup", 50);
         ingredientesBloqueados.Enqueue("Mostaza", 100);
         ingredientesBloqueados.Enqueue("Mayonesa", 150);
+
+
+        ingredienteList.Add(new IngredienteInfo("Mayonesa", 150));
+        ingredienteList.Add(new IngredienteInfo("Ketchup", 50));
+        ingredienteList.Add(new IngredienteInfo("Mostaza", 100));
+        ingredienteArray = ingredienteList.ToArray();
+        
+        CollectionSort.SortArray(ingredienteArray);
+        foreach (IngredienteInfo ingrediente in ingredienteArray)
+        {
+            Debug.Log(ingrediente.nombre + " - " +
+                      ingrediente.xpRequerida + " XP");
+        }
 
         ActualizarPantallaXP(); // Setea el texto en 0 al arrancar
     }
