@@ -62,7 +62,7 @@ public class TiendaManager : MonoBehaviour
         int cantidad = panelBotonesTienda.childCount;
         botonesIngredientes = new IngredienteBoton[cantidad];
 
-        // Get the existing button components.
+        
         for (int i = 0; i < cantidad; i++)
         {
             botonesIngredientes[i] =
@@ -70,10 +70,10 @@ public class TiendaManager : MonoBehaviour
                 .GetComponent<IngredienteBoton>();
         }
 
-        // Sort by XP, from lowest to highest.
+        
         CollectionSort.SortArray(botonesIngredientes);
 
-        // Reorder the existing buttons in the hierarchy.
+        
         for (int i = 0; i < botonesIngredientes.Length; i++)
         {
             botonesIngredientes[i].transform.SetSiblingIndex(i);
