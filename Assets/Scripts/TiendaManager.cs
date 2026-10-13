@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class TiendaManager : MonoBehaviour
 {
@@ -10,7 +11,11 @@ public class TiendaManager : MonoBehaviour
     public Transform puntoEntrega;
     public GameObject prefabCaja;
 
-    
+    [Header("Ordenamiento de botones")]
+    public Transform panelBotonesTienda;
+
+    private IngredienteBoton[] botonesIngredientes;
+
     public MonoBehaviour scriptCamara;
 
     [Header("Bases de Datos de Salsas")]
@@ -52,8 +57,32 @@ public class TiendaManager : MonoBehaviour
             }
         }
     }
+    private void OrdenarBotones()
+    {
+        int cantidad = panelBotonesTienda.childCount;
+        botonesIngredientes = new IngredienteBoton[cantidad];
 
-    public void AbrirTienda() { panelTienda.SetActive(true); panelCarrito.SetActive(false); }
+        // Get the existing button components.
+        for (int i = 0; i < cantidad; i++)
+        {
+            botonesIngredientes[i] =
+                panelBotonesTienda.GetChild(i)
+                .GetComponent<IngredienteBoton>();
+        }
+
+        // Sort by XP, from lowest to highest.
+        CollectionSort.SortArray(botonesIngredientes);
+
+        // Reorder the existing buttons in the hierarchy.
+        for (int i = 0; i < botonesIngredientes.Length; i++)
+        {
+            botonesIngredientes[i].transform.SetSiblingIndex(i);
+
+        }
+        
+    }
+
+    public void AbrirTienda() { panelTienda.SetActive(true); panelCarrito.SetActive(false); OrdenarBotones(); }
     public void AbrirCarrito() { panelTienda.SetActive(false); panelCarrito.SetActive(true); }
 
     public void CerrarCelular()
