@@ -6177,21 +6177,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 1112188951}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb399b60b8e65c442ba24049fbe82875, type: 3}
+  m_Script: {fileID: 11500000, guid: 3dec59499da80014f86851bed1f9c0e2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SistemaExperiencia
-  textoExperiencia: {fileID: 1439858096}
-  experienciaPorPulsacion: 25
+  m_EditorClassIdentifier: Assembly-CSharp::ManagerExperiencia
+  XP: 0
+  textoXP: {fileID: 1439858096}
   productos:
+  - nombre: Carne
+    xpNecesaria: 0
+    botonCompra: {fileID: 1998966974}
+  - nombre: Lechuga
+    xpNecesaria: 0
+    botonCompra: {fileID: 803558671}
   - nombre: Tarator
     xpNecesaria: 150
     botonCompra: {fileID: 790804664}
-  - nombre: Ketchup
-    xpNecesaria: 50
-    botonCompra: {fileID: 1933385386}
   - nombre: Mayonesa
     xpNecesaria: 100
     botonCompra: {fileID: 1531867978}
+  - nombre: Ketchup
+    xpNecesaria: 50
+    botonCompra: {fileID: 1933385386}
 --- !u!4 &1124527212 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 98ddd3714722ce84fb91894ad43654aa, type: 3}
@@ -7488,8 +7494,8 @@ Transform:
   m_GameObject: {fileID: 1259387239}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 296.76782, y: -219, z: -6}
-  m_LocalScale: {x: 212.61026, y: 14.375775, z: 94.95782}
+  m_LocalPosition: {x: 296.76782, y: -219, z: 222}
+  m_LocalScale: {x: 212.61026, y: 14.375775, z: 146.88075}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -10426,7 +10432,7 @@ Transform:
   m_GameObject: {fileID: 1632646866}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 423, y: -198.2, z: 461}
+  m_LocalPosition: {x: 423, y: -198.2, z: 869}
   m_LocalScale: {x: 82.32, y: 82.85, z: 1010.9}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12841,6 +12847,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ManagerExperiencia
   XP: 0
   textoXP: {fileID: 805097286}
+  productos: []
 --- !u!4 &1922089728
 Transform:
   m_ObjectHideFlags: 0
