@@ -32,6 +32,7 @@ public class InteraccionJugador : MonoBehaviour
         if (highlightedObject != null)
             highlightedObject.SetGlow(true);
     }
+
     void Update()
     {
         RaycastHit hit;
@@ -60,24 +61,19 @@ public class InteraccionJugador : MonoBehaviour
 
             RadioMusica radio =
                 hit.collider.GetComponentInParent<RadioMusica>();
-            
+
             UpdateHighlight(hit.collider.GetComponentInParent<AimGlow>());
 
             // CASO A: MÁQUINA DEL TROMPO
-
             if (baseTrompo != null)
             {
                 if (!baseTrompo.tieneTrompo)
                 {
                     if (inventario.ObtenerNombreActual() == "Trompo")
                     {
-                        MostrarIconoYTexto(
-                            iconoTeclaE,
-                            "Colocar Trompo de carne"
-                        );
+                        MostrarIconoYTexto(iconoTeclaE, "Colocar Trompo de carne");
 
-                        if (Keyboard.current != null &&
-                            Keyboard.current.eKey.wasPressedThisFrame)
+                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             baseTrompo.ColocarTrompo();
                             inventario.ConsumirHerramientaActual();
@@ -85,9 +81,7 @@ public class InteraccionJugador : MonoBehaviour
                     }
                     else
                     {
-                        MostrarTexto(
-                            "Máquina vacía (Necesitas un bloque de carne)"
-                        );
+                        MostrarTexto("Máquina vacía (Necesitas un bloque de carne)");
                     }
                 }
                 else
@@ -100,15 +94,9 @@ public class InteraccionJugador : MonoBehaviour
                         }
                         else
                         {
-                            MostrarIconoYTexto(
-                                iconoTeclaR,
-                                "Cortar Carne (" +
-                                baseTrompo.usosActuales +
-                                "/7)"
-                            );
+                            MostrarIconoYTexto(iconoTeclaR, "Cortar Carne (" + baseTrompo.usosActuales + "/7)");
 
-                            if (Keyboard.current != null &&
-                                Keyboard.current.rKey.wasPressedThisFrame)
+                            if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                             {
                                 baseTrompo.SacarCarne(inventario);
                             }
@@ -122,13 +110,9 @@ public class InteraccionJugador : MonoBehaviour
                         }
                         else
                         {
-                            MostrarIconoYTexto(
-                                iconoTeclaE,
-                                "Falta Carne. Presiona E para quitar el fierro"
-                            );
+                            MostrarIconoYTexto(iconoTeclaE, "Falta Carne. Presiona E para quitar el fierro");
 
-                            if (Keyboard.current != null &&
-                                Keyboard.current.eKey.wasPressedThisFrame)
+                            if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                             {
                                 baseTrompo.LimpiarTrompo();
                             }
@@ -138,7 +122,6 @@ public class InteraccionJugador : MonoBehaviour
             }
 
             // CASO B: BANDEJA DE LECHUGA
-
             else if (bandeja != null)
             {
                 if (bandeja.porcionesActuales == 0)
@@ -147,8 +130,7 @@ public class InteraccionJugador : MonoBehaviour
                     {
                         MostrarIcono(iconoTeclaE);
 
-                        if (Keyboard.current != null &&
-                            Keyboard.current.eKey.wasPressedThisFrame)
+                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             bandeja.LlenarBandeja();
                             inventario.ConsumirHerramientaActual();
@@ -156,9 +138,7 @@ public class InteraccionJugador : MonoBehaviour
                     }
                     else
                     {
-                        MostrarTexto(
-                            "Bandeja de Lechuga (Vacía)"
-                        );
+                        MostrarTexto("Bandeja de Lechuga (Vacía)");
                     }
                 }
                 else
@@ -171,8 +151,7 @@ public class InteraccionJugador : MonoBehaviour
                     {
                         MostrarIcono(iconoTeclaR);
 
-                        if (Keyboard.current != null &&
-                            Keyboard.current.rKey.wasPressedThisFrame)
+                        if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                         {
                             bandeja.SacarPorcion(inventario);
                         }
@@ -180,49 +159,35 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-
             // CASO C: RADIO
-            
-
             else if (radio != null)
             {
                 if (!radio.EstaEncendida())
                 {
-                    MostrarIconoYTexto(
-                        iconoTeclaE,
-                        "Encender radio"
-                    );
+                    MostrarIconoYTexto(iconoTeclaE, "Encender radio");
 
-                    if (Keyboard.current != null &&
-                        Keyboard.current.eKey.wasPressedThisFrame)
+                    if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                     {
                         radio.EncenderOCambiarEstacion();
                     }
                 }
                 else
                 {
-                    MostrarIconoYTexto(
-                        iconoTeclaE,
-                        "E: Cambiar estación | T: Apagar"
-                    );
+                    MostrarIconoYTexto(iconoTeclaE, "E: Cambiar estación | T: Apagar");
 
-                    // E cambia de estación
-                    if (Keyboard.current != null &&
-                        Keyboard.current.eKey.wasPressedThisFrame)
+                    if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                     {
                         radio.EncenderOCambiarEstacion();
                     }
 
-                    // T apaga la radio
-                    if (Keyboard.current != null &&
-                        Keyboard.current.tKey.wasPressedThisFrame)
+                    if (Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame)
                     {
                         radio.Apagar();
                     }
                 }
             }
-            // CASO D: ITEM RECOGIBLE
 
+            // CASO D: ITEM RECOGIBLE
             else if (item != null)
             {
                 if (inventario.TieneHerramientas())
@@ -233,8 +198,7 @@ public class InteraccionJugador : MonoBehaviour
                 {
                     MostrarIcono(iconoTeclaE);
 
-                    if (Keyboard.current != null &&
-                        Keyboard.current.eKey.wasPressedThisFrame)
+                    if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                     {
                         inventario.AgregarHerramienta(
                             item.nombreHerramienta,
@@ -246,151 +210,106 @@ public class InteraccionJugador : MonoBehaviour
             }
 
             // CASO E: PLATO DE ARMADO
-
             else if (plato != null)
             {
                 if (inventario.TieneHerramientas())
                 {
                     if (plato.PuedeAgregar())
                     {
-                        string ingrediente =
-                            inventario.ObtenerNombreActual();
+                        string ingrediente = inventario.ObtenerNombreActual();
 
-                        MostrarIconoYTexto(
-                            iconoTeclaE,
-                            "Agregar " +
-                            ingrediente +
-                            " al shawarma"
-                        );
+                        MostrarIconoYTexto(iconoTeclaE, "Agregar " + ingrediente + " al shawarma");
 
-                        if (Keyboard.current != null &&
-                            Keyboard.current.eKey.wasPressedThisFrame)
+                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
                             plato.AgregarIngrediente(ingrediente);
-
                             inventario.UsarHerramientaActual();
                         }
                     }
                     else
                     {
-                        MostrarTexto(
-                            "El shawarma está lleno"
-                        );
+                        MostrarTexto("El shawarma está lleno");
                     }
                 }
                 else
                 {
                     if (plato.CantidadIngredientes() > 0)
                     {
-                        MostrarTexto(
-                            "Q para TIRAR | R para CERRAR"
-                        );
+                        MostrarTexto("Q para TIRAR | R para CERRAR");
 
-                        if (Keyboard.current != null &&
-                            Keyboard.current.qKey.wasPressedThisFrame)
+                        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
                         {
                             plato.TirarShawarma();
                         }
-                        else if (
-                            Keyboard.current != null &&
-                            Keyboard.current.rKey.wasPressedThisFrame)
+                        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                         {
                             plato.CerrarShawarma(inventario);
                         }
                     }
                     else
                     {
-                        MostrarTexto(
-                            "Pan vacío listo para armar"
-                        );
+                        MostrarTexto("Pan vacío listo para armar");
                     }
                 }
             }
 
-
-            // CASO F: CLIENTE
-
-
+            // CASO F: CLIENTE INTELIGENTE
             else if (cliente != null)
             {
-                if (cliente.estadoActual ==
-                    Cliente.Estado.EsperandoAtencion)
+                // FASE 1: Tomar la orden
+                if (cliente.estadoActual == Cliente.Estado.EsperandoAtencion)
                 {
                     MostrarIconoYTexto(
                         iconoTeclaR,
-                        "Pedido: " +
-                        cliente.ObtenerTextoPedido()
+                        "Tomar Orden - Pedido: " + cliente.ObtenerTextoPedido()
                     );
 
-                    if (Keyboard.current != null &&
-                        Keyboard.current.rKey.wasPressedThisFrame)
+                    if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                     {
                         cliente.AceptarPedido();
                     }
                 }
-                else if (
-                    cliente.estadoActual ==
-                    Cliente.Estado.EsperandoComida)
+                // FASE 2: Entregar el Shawarma preparado
+                else if (cliente.estadoActual == Cliente.Estado.EsperandoComida)
                 {
-                    if (inventario.ObtenerNombreActual() == "Shawarma")
-                    {
-                        MostrarIconoYTexto(
-                            iconoTeclaR,
-                            "Entregar Shawarma"
-                        );
+                    MostrarIconoYTexto(
+                        iconoTeclaR,
+                        "Entregar Shawarma (Pedido: " + cliente.ObtenerTextoPedido() + ")"
+                    );
 
-                        if (Keyboard.current != null &&
-                            Keyboard.current.rKey.wasPressedThisFrame)
-                        {
-                            cliente.RecibirComida(inventario);
-                        }
-                    }
-                    else
+                    if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
                     {
-                        MostrarTexto(
-                            "Esperando: " +
-                            cliente.ObtenerTextoPedido()
-                        );
+                        if (inventario != null && inventario.ObtenerNombreActual() == "Shawarma")
+                        {
+                            cliente.AtenderClienteExitoso();
+                            inventario.ConsumirHerramientaActual();
+                        }
+                        else
+                        {
+                            Debug.Log("Necesitas tener un Shawarma preparado en la mano.");
+                        }
                     }
                 }
             }
 
-
-          
-            // CASO G: SUPERFICIE
-          
-
+            // CASO G: SUPERFICIE (MESA / PISO)
             else
             {
                 if (inventario.TieneHerramientas())
                 {
-                    // Mesa o piso
                     if (hit.normal.y > 0.7f)
                     {
-                        MostrarIconoYTexto(
-                            iconoTeclaE,
-                            "Apoyar"
-                        );
+                        MostrarIconoYTexto(iconoTeclaE, "Apoyar");
 
-                        if (Keyboard.current != null &&
-                            Keyboard.current.eKey.wasPressedThisFrame)
+                        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                         {
-                            Vector3 posicionApoyo =
-                                hit.point +
-                                new Vector3(0, 0.2f, 0);
-
-                            inventario.SoltarHerramientaActual(
-                                posicionApoyo
-                            );
+                            Vector3 posicionApoyo = hit.point + new Vector3(0, 0.2f, 0);
+                            inventario.SoltarHerramientaActual(posicionApoyo);
                         }
                     }
-
-                    // Pared o techo
                     else
                     {
-                        MostrarTexto(
-                            "No puedes apoyar esto en la pared"
-                        );
+                        MostrarTexto("No puedes apoyar esto en la pared");
                     }
                 }
                 else
@@ -406,11 +325,8 @@ public class InteraccionJugador : MonoBehaviour
             OcultarTodo();
         }
     }
-    
-    
-    // FUNCIONES AUXILIARES DE INTERFAZ
-    
 
+    // FUNCIONES AUXILIARES DE INTERFAZ
     void MostrarIcono(Sprite icono)
     {
         if (iconoInteraccionEnPantalla != null)
@@ -425,7 +341,6 @@ public class InteraccionJugador : MonoBehaviour
         }
     }
 
-
     void MostrarTexto(string mensaje)
     {
         if (iconoInteraccionEnPantalla != null)
@@ -439,10 +354,7 @@ public class InteraccionJugador : MonoBehaviour
         }
     }
 
-
-    void MostrarIconoYTexto(
-        Sprite icono,
-        string mensaje)
+    void MostrarIconoYTexto(Sprite icono, string mensaje)
     {
         if (iconoInteraccionEnPantalla != null)
         {
@@ -455,7 +367,6 @@ public class InteraccionJugador : MonoBehaviour
             textoAviso.text = mensaje;
         }
     }
-
 
     void OcultarTodo()
     {

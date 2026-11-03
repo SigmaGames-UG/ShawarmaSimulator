@@ -30,8 +30,6 @@ public class TiendaManager : MonoBehaviour
     public Sprite icontrompo;
     public Sprite iconLechuga;
 
-
-
     private List<GameObject> carritoPrefabs = new List<GameObject>();
     private List<string> carritoNombres = new List<string>();
     private List<Sprite> carritoIconos = new List<Sprite>();
@@ -48,7 +46,6 @@ public class TiendaManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
 
-                
                 if (scriptCamara != null) scriptCamara.enabled = false;
             }
             else
@@ -57,12 +54,14 @@ public class TiendaManager : MonoBehaviour
             }
         }
     }
+
     private void OrdenarBotones()
     {
+        if (panelBotonesTienda == null) return;
+
         int cantidad = panelBotonesTienda.childCount;
         botonesIngredientes = new IngredienteBoton[cantidad];
 
-        
         for (int i = 0; i < cantidad; i++)
         {
             botonesIngredientes[i] =
@@ -70,48 +69,140 @@ public class TiendaManager : MonoBehaviour
                 .GetComponent<IngredienteBoton>();
         }
 
-        
         CollectionSort.SortArray(botonesIngredientes);
 
-        
         for (int i = 0; i < botonesIngredientes.Length; i++)
         {
-            botonesIngredientes[i].transform.SetSiblingIndex(i);
-
+            if (botonesIngredientes[i] != null)
+            {
+                botonesIngredientes[i].transform.SetSiblingIndex(i);
+            }
         }
-        
     }
 
-    public void AbrirTienda() { panelTienda.SetActive(true); panelCarrito.SetActive(false); OrdenarBotones(); }
-    public void AbrirCarrito() { panelTienda.SetActive(false); panelCarrito.SetActive(true); }
+    public void AbrirTienda()
+    {
+        if (panelTienda != null) panelTienda.SetActive(true);
+        if (panelCarrito != null) panelCarrito.SetActive(false);
+        OrdenarBotones();
+    }
+
+    public void AbrirCarrito()
+    {
+        if (panelTienda != null) panelTienda.SetActive(false);
+        if (panelCarrito != null) panelCarrito.SetActive(true);
+    }
 
     public void CerrarCelular()
     {
-        uiCelular.SetActive(false);
+        if (uiCelular != null) uiCelular.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        
         if (scriptCamara != null) scriptCamara.enabled = true;
     }
 
-    public void AñadirKetchup() { Agregar(prefabKetchup, "Ketchup", iconKetchup); }
-    public void AñadirMayo() { Agregar(prefabMayo, "Mayonesa", iconMayo); }
-    public void AñadirTarator() { Agregar(prefabTarator, "Tarator", iconTarator); }
-    public void AñadirTrompo() { Agregar(prefabtrompo, "Trompo", icontrompo); }
+    // --- MÉTODOS DE COMPRA DIRECTOS ---
+    // --- MÉTODOS DE COMPRA SEGUROS Y BLOQUEADOS ---
+    public void AñadirKetchup()
+    {
+        if (EstaDesbloqueado("Ketchup"))
+        {
+            Agregar(prefabKetchup, "Ketchup", iconKetchup);
+        }
+        else
+        {
+            Debug.Log("¡Ketchup bloqueado! Debes desbloquearlo con experiencia primero.");
+        }
+    }
 
-    public void AñadirLechuga() { Agregar(prefablechuga, "Lechuga", iconLechuga); }
+    public void AñadirMayo()
+    {
+        if (EstaDesbloqueado("Mayonesa"))
+        {
+            Agregar(prefabMayo, "Mayonesa", iconMayo);
+        }
+        else
+        {
+            Debug.Log("¡Mayonesa bloqueada! Debes desbloquearla con experiencia primero.");
+        }
+    }
+
+    public void AñadirTarator()
+    {
+        if (EstaDesbloqueado("Tarator"))
+        {
+            Agregar(prefabTarator, "Tarator", iconTarator);
+        }
+        else
+        {
+            Debug.Log("¡Tarator bloqueado! Debes desbloquearlo con experiencia primero.");
+        }
+    }
+
+    public void AñadirTrompo() 
+    { 
+        // Permitimos comprar si está desbloqueado como "Trompo" o "Carne", 
+        // o si queremos que la carne y la lechuga estén siempre disponibles al iniciar:
+        if (EstaDesbloqueado("Trompo") || EstaDesbloqueado("Carne") || true) // El "|| true" asegura que se pueda comprar de inmediato
+        { 
+            Agregar(prefabtrompo, "Trompo", icontrompo); 
+        }
+        else 
+        {
+            Debug.Log("¡Trompo bloqueado!");
+        }
+    }
+
+    public void AñadirLechuga()
+    {
+        if (EstaDesbloqueado("Lechuga"))
+        {
+            Agregar(prefablechuga, "Lechuga", iconLechuga);
+        }
+        else
+        {
+            Debug.Log("¡Lechuga bloqueada!");
+        }
+    }
+
+    // Comprobación conectada al ManagerExperiencia
+    private bool EstaDesbloqueado(string nombreIngrediente)
+    {
+        if (ManagerExperiencia.Instancia != null && ManagerExperiencia.Instancia.ingredientesDesbloqueados != null)
+        {
+            return ManagerExperiencia.Instancia.ingredientesDesbloqueados.Contains(nombreIngrediente);
+        }
+        return true;
+    }
 
     private void Agregar(GameObject prefab, string nombre, Sprite icono)
     {
+        if (prefab == null)
+        {
+            Debug.LogError("¡El prefab de " + nombre + " no está asignado en el Inspector de TiendaManager!");
+            return;
+        }
+
         carritoPrefabs.Add(prefab);
         carritoNombres.Add(nombre);
         carritoIconos.Add(icono);
+        Debug.Log("Añadido al carrito: " + nombre);
     }
 
     public void ComprarCarrito()
     {
-        if (carritoPrefabs.Count == 0) return;
+        if (carritoPrefabs.Count == 0)
+        {
+            Debug.Log("El carrito está vacío.");
+            return;
+        }
+
+        if (prefabCaja == null || puntoEntrega == null)
+        {
+            Debug.LogError("¡Falta asignar el prefabCaja o el puntoEntrega en el TiendaManager!");
+            return;
+        }
 
         for (int i = 0; i < carritoPrefabs.Count; i++)
         {
@@ -119,13 +210,19 @@ public class TiendaManager : MonoBehaviour
             GameObject nuevaCaja = Instantiate(prefabCaja, posicion, Quaternion.identity);
 
             CajaDelivery infoCaja = nuevaCaja.GetComponent<CajaDelivery>();
-            infoCaja.prefabContenido = carritoPrefabs[i];
-            infoCaja.nombreContenido = carritoNombres[i];
-            infoCaja.iconoContenido = carritoIconos[i];
+            if (infoCaja != null)
+            {
+                infoCaja.prefabContenido = carritoPrefabs[i];
+                infoCaja.nombreContenido = carritoNombres[i];
+                infoCaja.iconoContenido = carritoIconos[i];
+            }
         }
 
+        Debug.Log("¡Compra realizada con éxito! Cajas generadas.");
         carritoPrefabs.Clear();
         carritoNombres.Clear();
         carritoIconos.Clear();
+
+        CerrarCelular();
     }
 }

@@ -1,145 +1,193 @@
 using UnityEngine;
+using TMPro;
 
 public class Cliente : MonoBehaviour
 {
-    public enum Estado { EsperandoAtencion, EsperandoComida, Satisfecho }
-    public Estado estadoActual = Estado.EsperandoAtencion;
-    private bool moving = false;
-    private int speed = 140;
-    private Vector3 targetPosition;
+    // Definimos los estados claramente separados
+    public enum Estado { EsperandoAtencion, EsperandoComida, Satisfecho, Enojado }
+    public Estado estadoActual = Estado.EsperandoAtencion; // Arranca esperando a que le tomes la orden
 
-    public ISimpleSet<string> pedido = new SimpleArraySet<string>(5);
-    public ClienteQueue clienteQueue;
+    public System.Collections.Generic.Queue<string> pedido = new System.Collections.Generic.Queue<string>();
+    public TextMeshProUGUI textoPedido;
+
+    private bool quiereComprar = true;
+    private float tiempoRestante = 0f;
+    private System.Action callbackSalida;
+    private bool atendidoOFrustrado = false;
+    private int cantidadIngredientesPedido = 0;
+
+    public ClienteQueue miColaCliente;
 
     void Start()
     {
-        GenerarPedido();
+        if (tiempoRestante <= 0f && quiereComprar)
+        {
+            GenerarPedidoNormal();
+        }
     }
 
-    void GenerarPedido()
+    public void InicializarComportamiento(bool compra, float tiempoCompra, float tiempoNoCompra, System.Action alSalir)
     {
-        pedido.Add("Carne");
+        quiereComprar = compra;
+        callbackSalida = alSalir;
+        atendidoOFrustrado = false;
+        estadoActual = Estado.EsperandoAtencion; // Al spawnear, espera que le tomen la orden
 
-        string[] ingredientesPosibles = ManagerExperiencia.Instancia.ingredientesDesbloqueados.ToArray();
-
-        int cantidadExtras = Random.Range(0, 4);
-        int totalDeseado = 1 + cantidadExtras;
-
-        if (totalDeseado > ingredientesPosibles.Length) totalDeseado = ingredientesPosibles.Length;
-
-        while (pedido.Count < totalDeseado)
+        if (quiereComprar)
         {
-            string ingredienteAzar = ingredientesPosibles[Random.Range(0, ingredientesPosibles.Length)];
-            pedido.Add(ingredienteAzar);
+            tiempoRestante = tiempoCompra; // 30 segundos totales de paciencia
+            GenerarPedidoNormal();
         }
+        else
+        {
+            tiempoRestante = tiempoNoCompra; // 5 segundos si solo mira
+            DesactivarPedidoVisual();
+        }
+    }
+
+    void Update()
+    {
+        if (atendidoOFrustrado) return;
+
+        tiempoRestante -= Time.deltaTime;
+
+        if (tiempoRestante <= 0f)
+        {
+            atendidoOFrustrado = true;
+
+            if (quiereComprar)
+            {
+                Debug.Log("¡Cliente cansado de esperar! Se fue sin ser atendido. Pierdes XP.");
+                if (ManagerExperiencia.Instancia != null)
+                {
+                    ManagerExperiencia.Instancia.ModificarXP(-15);
+                }
+            }
+            else
+            {
+                Debug.Log("El transeúnte se retiró en paz.");
+            }
+
+            DestruirCliente();
+        }
+    }
+
+    private void GenerarPedidoNormal()
+    {
+        // Limpiamos el pedido por si acaso
+        pedido.Clear();
+
+        if (ManagerExperiencia.Instancia != null && ManagerExperiencia.Instancia.ingredientesDesbloqueados != null)
+        {
+            // Extraemos los ingredientes que el jugador YA tiene desbloqueados en este momento
+            string[] ingredientesDisponibles = ManagerExperiencia.Instancia.ingredientesDesbloqueados.ToArray();
+
+            if (ingredientesDisponibles.Length > 0)
+            {
+                // Decidimos cuántos ingredientes tendrá el shawarma (entre 1 y la cantidad disponible)
+                int cantidadExtras = Random.Range(0, 3); // 0, 1 o 2 extras
+                int totalDeseado = 1 + cantidadExtras;
+
+                if (totalDeseado > ingredientesDisponibles.Length)
+                    totalDeseado = ingredientesDisponibles.Length;
+
+                // Añadimos ingredientes aleatorios de los que ya están desbloqueados
+                while (pedido.Count < totalDeseado)
+                {
+                    string ingredienteAleatorio = ingredientesDisponibles[Random.Range(0, ingredientesDisponibles.Length)];
+
+                    // Evitamos duplicar el mismo ingrediente en un mismo pedido si lo deseamos más limpio
+                    // (O lo dejamos libre si querés que pueda pedir doble). Aquí lo encolamos directo:
+                    pedido.Enqueue(ingredienteAleatorio);
+                }
+            }
+        }
+
+        ActualizarTextoPedido();
+    }
+
+    private void DesactivarPedidoVisual()
+    {
+        if (textoPedido != null)
+        {
+            textoPedido.text = "Solo mirando...";
+        }
+    }
+
+    private void ActualizarTextoPedido()
+    {
+        if (textoPedido != null)
+        {
+            textoPedido.text = "Pedido: " + ObtenerTextoPedido();
+        }
+    }
+
+    // --- NUEVO MÉTODO: El jugador toma la orden ---
+    public void AceptarPedido()
+    {
+        if (estadoActual == Estado.EsperandoAtencion)
+        {
+            estadoActual = Estado.EsperandoComida; // Pasa al estado de esperar que cocines el shawarma
+            Debug.Log("¡Orden tomada! Ahora prepara el shawarma.");
+        }
+    }
+
+    // --- MÉTODOS REQUERIDOS POR LA COLA ---
+    public void MoveTo(Vector3 nuevaPosicion)
+    {
+        transform.position = nuevaPosicion;
     }
 
     public string ObtenerTextoPedido()
     {
-        return string.Join(" + ", pedido.ToArray());
+        if (pedido == null || pedido.Count == 0) return "Vacío";
+
+        // Convertimos la cola temporalmente a un array para unirlos con " + "
+        string[] itemsPedido = pedido.ToArray();
+        string resultado = string.Join(" + ", itemsPedido);
+
+        return resultado;
     }
-
-    public void AceptarPedido()
+    public void AtenderClienteExitoso()
     {
-        estadoActual = Estado.EsperandoComida;
-    }
+        if (!quiereComprar || atendidoOFrustrado || estadoActual != Estado.EsperandoComida) return;
 
-    public void RecibirComida(ToolManager inventario)
-    {
-        GameObject objEnMano = inventario.ObtenerObjetoFisicoActual();
+        atendidoOFrustrado = true;
 
-        if (objEnMano != null)
+        // 1. Registramos la venta de dinero en el DayManager
+        if (DayManager.Instancia != null)
         {
-            // Buscamos el componente de datos
-            DatosShawarma datos = objEnMano.GetComponentInChildren<DatosShawarma>();
+            DayManager.Instancia.RegistrarVenta(150f);
+        }
 
-            // ¡TRUCO DE SEGURIDAD! Si por alguna razón sigue sin tenerlo, se lo agregamos en el aire
-            if (datos == null)
-            {
-                Debug.LogWarning("El objeto no tenía el script DatosShawarma. Se lo agregamos automáticamente.");
-                datos = objEnMano.AddComponent<DatosShawarma>();
-                // Le inventamos un contenido básico para que no explote
-                datos.ingredientesContenidos = new string[] { "Carne" };
-            }
-
-            // Evaluamos la receta
-            if (EvaluarShawarma(datos.ingredientesContenidos))
-            {
-                int xpGanada = pedido.Count * 15;
-                ManagerExperiencia.Instancia.ModificarXP(xpGanada);
-                Debug.Log("¡Cliente Feliz! Ganaste " + xpGanada + " XP");
-            }
-            else
-            {
-                ManagerExperiencia.Instancia.ModificarXP(-20);
-                Debug.Log("¡Receta equivocada! Perdiste 20 XP");
-            }
+        // 2. ¡Damos XP al jugador por hacer el pedido bien!
+        if (ManagerExperiencia.Instancia != null)
+        {
+            ManagerExperiencia.Instancia.ModificarXP(25); // Suma 25 XP por venta exitosa
+            Debug.Log("¡Shawarma entregado con éxito! +25 XP y dinero registrado.");
         }
         else
         {
-            Debug.Log("No tenías nada en la mano.");
+            Debug.Log("¡Shawarma entregado con éxito!");
         }
 
-        inventario.ConsumirHerramientaActual();
-        estadoActual = Estado.Satisfecho;
+        // 3. Limpiamos y removemos al cliente de la cola
+        if (miColaCliente != null)
+        {
+            miColaCliente.DestroyClientAtendido(this);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void DestruirCliente()
+    {
+        if (miColaCliente != null)
+        {
+            miColaCliente.RemoverClienteDeCola(this);
+        }
         Destroy(gameObject);
-    }
-
-    // Algoritmo para verificar que los arreglos coincidan exactamente
-    private bool EvaluarShawarma(string[] entregados)
-    {
-        string[] pedidosArray = pedido.ToArray();
-
-        // --- IMPRIMIMOS EN CONSOLA PARA DEPURAR ---
-        Debug.Log("--- EVALUANDO PEDIDO ---");
-        Debug.Log("Cliente pidió: " + string.Join(" | ", pedidosArray));
-        Debug.Log("Shawarma entregado: " + (entregados != null ? string.Join(" | ", entregados) : "VACÍO O NULL"));
-
-        if (entregados == null) return false;
-
-        // Si la cantidad de ingredientes es distinta, ya está mal de entrada
-        if (pedidosArray.Length != entregados.Length)
-        {
-            Debug.Log("¡Error! La cantidad de ingredientes no coincide.");
-            return false;
-        }
-
-        // Verificamos que cada ingrediente pedido esté en el shawarma entregado
-        foreach (string p in pedidosArray)
-        {
-            bool encontrado = false;
-            foreach (string e in entregados)
-            {
-                // Comparamos limpiando espacios y mayúsculas para evitar errores tontos
-                if (p.Trim().ToLower() == e.Trim().ToLower())
-                {
-                    encontrado = true;
-                    break;
-                }
-            }
-            if (!encontrado)
-            {
-                Debug.Log("¡Error! Falta el ingrediente: " + p);
-                return false;
-            }
-        }
-
-        Debug.Log("¡Receta perfecta! Sumando XP...");
-        return true; // Si llegó hasta acá, el shawarma es perfecto
-    }
-
-    private void Update()
-    {
-        if (moving)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-        }
-        if (transform.position == targetPosition) moving = false;
-    }
-
-    public void MoveTo(Vector3 Position)
-    {
-        targetPosition = Position;
-        moving = true;
     }
 }

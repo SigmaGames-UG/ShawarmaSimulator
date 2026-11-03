@@ -1,90 +1,59 @@
 using UnityEngine;
-using System.Collections.Generic;
-using TMPro; 
 
 public class ClienteSpawner : MonoBehaviour
 {
-    public GameObject prefabCliente;
-    public Transform[] puntosDeSpawn;
-    public float tiempoEntreClientes = 15f;
-    private float timer = 0f;
+    [Header("Configuración de Spawn")]
+    public GameObject prefabCliente; // El prefab de tu cliente
+    public Transform puntoSpawn;     // Donde aparece el cliente
+    public float intervaloSpawn = 40f; // Cada cuánto intenta spawnear (40 segundos)
 
-    public List<GameObject> clientesActivos = new List<GameObject>();
+    [Header("Tiempos de Comportamiento")]
+    public float tiempoEsperaComprador = 30f; // Tiempo límite si decide comprar
+    public float tiempoEsperaNoComprador = 5f; // Tiempo que se queda si decide no comprar
+    [Range(0f, 1f)] public float probabilidadCompra = 0.7f; // 70% de probabilidad de que quiera comprar
 
-    [Header("Interfaz de Usuario")]
-    public TextMeshProUGUI textoPedidosUI; 
+    private GameObject clienteActualEnSpawn = null;
+    private float temporizadorSpawn = 0f;
 
     void Update()
     {
-        timer += Time.deltaTime;
+        // Si ya hay un cliente en el spawn, no dejamos aparecer a otro
+        if (clienteActualEnSpawn != null) return;
 
-        if (timer >= tiempoEntreClientes)
+        // Controlamos el temporizador de 40 segundos
+        temporizadorSpawn += Time.deltaTime;
+        if (temporizadorSpawn >= intervaloSpawn)
         {
-            SpawnearCliente();
-            timer = 0f;
+            temporizadorSpawn = 0f;
+            GenerarClienteInteligente();
         }
-
-       
-        clientesActivos.RemoveAll(item => item == null);
-
-        ActualizarPantallaPedidos();
     }
 
-    void SpawnearCliente()
+    void GenerarClienteInteligente()
     {
-        if (puntosDeSpawn.Length == 0) return;
+        if (prefabCliente == null || puntoSpawn == null) return;
 
-       
-        List<Transform> puntosLibres = new List<Transform>();
+        // Instanciamos al cliente en el punto de spawn
+        clienteActualEnSpawn = Instantiate(prefabCliente, puntoSpawn.position, puntoSpawn.rotation);
 
-        foreach (Transform punto in puntosDeSpawn)
+        // Determinamos de forma aleatoria si decide comprar o no según la probabilidad
+        bool quiereComprar = UnityEngine.Random.value <= probabilidadCompra;
+
+        // Configuramos su comportamiento inteligente (le pasamos los datos al script del cliente)
+        Cliente InteligenciaCliente = clienteActualEnSpawn.GetComponent<Cliente>();
+        if (InteligenciaCliente != null)
         {
-            bool ocupado = false;
-            foreach (GameObject cliente in clientesActivos)
-            {
-                
-                if (cliente != null && Vector3.Distance(cliente.transform.position, punto.position) < 1.0f)
-                {
-                    ocupado = true;
-                    break;
-                }
-            }
-            if (!ocupado) puntosLibres.Add(punto);
+            InteligenciaCliente.InicializarComportamiento(quiereComprar, tiempoEsperaComprador, tiempoEsperaNoComprador, OnClienteSeFue);
         }
 
-       
-        if (puntosLibres.Count == 0) return;
-
-        
-        Transform puntoElegido = puntosLibres[Random.Range(0, puntosLibres.Count)];
-
-        GameObject nuevoCliente = Instantiate(prefabCliente, puntoElegido.position, puntoElegido.rotation);
-        clientesActivos.Add(nuevoCliente);
+        Debug.Log(quiereComprar ? "Cliente llegó con intención de comprar." : "Cliente llegó solo de paso (no comprará).");
     }
 
-    void ActualizarPantallaPedidos()
+    // Callback para limpiar la referencia cuando el cliente se va solo o es atendido
+    public void OnClienteSeFue()
     {
-        if (textoPedidosUI == null) return;
-
-        string textoFinal = "ÓRDENES ACTIVAS:\n\n";
-        int ordenesPendientes = 0;
-
-        foreach (GameObject obj in clientesActivos)
-        {
-            if (obj != null)
-            {
-                Cliente cliente = obj.GetComponent<Cliente>();
-             
-                if (cliente != null && cliente.estadoActual == Cliente.Estado.EsperandoComida)
-                {
-                    textoFinal += "- Shawarma (" + cliente.ObtenerTextoPedido() + ")\n";
-                    ordenesPendientes++;
-                }
-            }
-        }
-
-        if (ordenesPendientes == 0) textoFinal += "Sin pedidos por ahora...";
-
-        textoPedidosUI.text = textoFinal;
+        clienteActualEnSpawn = null;
+        // Reiniciamos el conteo para los próximos 40 segundos desde que se libera el espacio
+        temporizadorSpawn = 0f;
     }
 }

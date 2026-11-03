@@ -1,149 +1,79 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using System;
+using System.Collections.Generic;
 
 public class ManagerExperiencia : MonoBehaviour
 {
     public static ManagerExperiencia Instancia;
 
-    [Serializable]
-    public class ProductoDesbloqueable
-    {
-        public string nombre;
-        public int xpNecesaria;
-        public Button botonCompra;
+    [Header("Datos de Experiencia")]
+    public int experienciaActual = 0;
+    public TextMeshProUGUI textoXpUI;
 
-        [NonSerialized] public bool desbloqueado;
-    }
-
-    [Header("Experiencia")]
-    public int XP = 0;
-    [SerializeField] private TMP_Text textoXP;
-
-    [Header("Productos de la tienda (Celular)")]
-    [SerializeField] private ProductoDesbloqueable[] productos = new ProductoDesbloqueable[0];
-
-    SimpleArrayList<IngredienteInfo> ingredienteList = new SimpleArrayList<IngredienteInfo>();
-    IngredienteInfo[] ingredienteArray;
-    public ISimpleSet<string> ingredientesDesbloqueados = new SimpleArraySet<string>(10);
-    private ISimplePriorityQueue<string> ingredientesBloqueados = new SimpleArrayPriorityQueue<string>();
-
-    private ISimplePriorityQueue<ProductoDesbloqueable> pendientesCelular;
-
-    private AVL<string> catalogoAVL = new AVL<string>();
-
+    [Header("Ingredientes Desbloqueados")]
+    public List<string> ingredientesDesbloqueados = new List<string>() { "Carne", "Lechuga", "Trompo" };
     void Awake()
     {
         if (Instancia == null)
         {
             Instancia = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
             return;
         }
+
+        // Forzamos estrictamente que la lista inicie únicamente con Carne y Lechuga
+        InicializarIngredientesBase();
     }
 
     void Start()
     {
-        // Inicializamos sets y AVL base
-        ingredientesDesbloqueados.Add("Carne");
-        ingredientesDesbloqueados.Add("Lechuga");
-        catalogoAVL.Insert("Carne");
-        catalogoAVL.Insert("Lechuga");
+        ActualizarInterfazXP();
+    }
 
-        ingredientesBloqueados.Enqueue("Ketchup", 50);
-        ingredientesBloqueados.Enqueue("Mostaza", 100);
-        ingredientesBloqueados.Enqueue("Mayonesa", 150);
-
-        // Inicializamos la cola del celular
-        pendientesCelular = new SimpleLinkedPriorityQueue<ProductoDesbloqueable>();
-
-        foreach (ProductoDesbloqueable producto in productos)
+    public void InicializarIngredientesBase()
+    {
+        // Nos aseguramos de que no se dupliquen y contenga solo los dos iniciales
+        if (ingredientesDesbloqueados == null)
         {
-            producto.desbloqueado = false;
-            if (producto.botonCompra != null)
-            {
-                producto.botonCompra.interactable = false;
-            }
-            pendientesCelular.Enqueue(producto, producto.xpNecesaria);
+            ingredientesDesbloqueados = new List<string>();
         }
 
-        ingredienteList.Add(new IngredienteInfo("Mayonesa", 150));
-        ingredienteList.Add(new IngredienteInfo("Ketchup", 50));
-        ingredienteList.Add(new IngredienteInfo("Mostaza", 100));
-        ingredienteArray = ingredienteList.ToArray();
+        // Si la lista está vacía o tiene elementos no deseados al iniciar, la reseteamos
+        if (!ingredientesDesbloqueados.Contains("Carne"))
+            ingredientesDesbloqueados.Add("Carne");
 
-        CollectionSort.SortArray(ingredienteArray);
-
-        ActualizarPantallaXP();
-
-        // Evaluamos según la XP actual (si es 0, mantendrá todo bloqueado)
-        RevisarDesbloqueos();
+        if (!ingredientesDesbloqueados.Contains("Lechuga"))
+            ingredientesDesbloqueados.Add("Lechuga");
     }
 
     public void ModificarXP(int cantidad)
     {
-        if (cantidad == 0) return;
+        experienciaActual += cantidad;
+        if (experienciaActual < 0) experienciaActual = 0;
 
-        XP += cantidad;
-        if (XP < 0) XP = 0;
-
-        Debug.Log("XP Actualizada: " + XP);
-
-        ActualizarPantallaXP();
-        RevisarDesbloqueos();
+        ActualizarInterfazXP();
+        Debug.Log("Experiencia actualizada: " + experienciaActual);
     }
 
-    private void ActualizarPantallaXP()
+    // Método para desbloquear nuevos ingredientes mediante la tienda o progresión
+    public void DesbloquearIngrediente(string nuevoIngrediente)
     {
-        if (textoXP != null)
+        if (!ingredientesDesbloqueados.Contains(nuevoIngrediente))
         {
-            textoXP.text = "XP: " + XP;
-        }
-    }
-
-    private void RevisarDesbloqueos()
-    {
-        while (!ingredientesBloqueados.IsEmpty && XP >= ingredientesBloqueados.GetHighestPriority())
-        {
-            string nuevoIngrediente = ingredientesBloqueados.Dequeue();
             ingredientesDesbloqueados.Add(nuevoIngrediente);
-            catalogoAVL.Insert(nuevoIngrediente);
-
-            Debug.Log("¡NUEVO INGREDIENTE DESBLOQUEADO Y REGISTRADO EN AVL: " + nuevoIngrediente + "!");
-        }
-
-        while (!pendientesCelular.IsEmpty && XP >= pendientesCelular.GetHighestPriority())
-        {
-            ProductoDesbloqueable producto = pendientesCelular.Dequeue();
-            producto.desbloqueado = true;
-
-            if (producto.botonCompra != null)
-            {
-                producto.botonCompra.interactable = true;
-            }
-
-            Debug.Log("Desbloqueaste en el celular: " + producto.nombre);
+            Debug.Log("¡Ingrediente desbloqueado: " + nuevoIngrediente + "!");
         }
     }
 
-    public bool EstaDesbloqueado(string nombreProducto)
+    void ActualizarInterfazXP()
     {
-        foreach (ProductoDesbloqueable producto in productos)
+        if (textoXpUI != null)
         {
-            if (producto.nombre == nombreProducto)
-            {
-                return producto.desbloqueado;
-            }
+            textoXpUI.text = "XP: " + experienciaActual;
         }
-        return false;
-    }
-
-    public bool IngredienteEstaDisponible(string nombreIngrediente)
-    {
-        return catalogoAVL.Search(nombreIngrediente);
     }
 }
