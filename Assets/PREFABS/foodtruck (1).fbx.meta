@@ -3,7 +3,22 @@ guid: 8347a531399764f4783b0da4a2754146
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FoodtruckExterior
+    second: {fileID: 2100000, guid: 8636092f7e6a8f64c8db3ad4b10f304c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FoodtruckRoof
+    second: {fileID: 2100000, guid: da72bbf9da667634ca1cac4306bea173, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ruedas
+    second: {fileID: 2100000, guid: 000de67fe668beb4998fcedeb3d7c1cd, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

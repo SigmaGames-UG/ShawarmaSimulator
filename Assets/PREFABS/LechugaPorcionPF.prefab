@@ -105,7 +105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemRecogible
   nombreHerramienta: LechugaPorcion
   iconoHerramienta: {fileID: 0}
-  posicionEnMano: {x: 0, y: 0, z: -5}
+  posicionEnMano: {x: 0, y: 0, z: 0}
   rotacionEnMano: {x: 0, y: 0, z: 0}
 --- !u!135 &-2487494120322834618
 SphereCollider:

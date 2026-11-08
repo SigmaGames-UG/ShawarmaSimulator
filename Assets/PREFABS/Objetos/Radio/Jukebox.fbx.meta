@@ -1,9 +1,29 @@
 fileFormatVersion: 2
-guid: 0a7430d3600569b46b32a4cc647d6fdf
+guid: 43603c04b60dfc44e91b575bb12f4162
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Body
+    second: {fileID: 2100000, guid: 16b1aa490308ae74a8f75655aec8229f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Consola
+    second: {fileID: 2100000, guid: 206b8a259e198e64eb12cade18a80f02, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parlante
+    second: {fileID: 2100000, guid: 8bd603126c2b62d4e96b7986abeeab0c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Volumen
+    second: {fileID: 2100000, guid: 47bc580f9a1300642ab90489ca30055a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -1,9 +1,29 @@
 fileFormatVersion: 2
-guid: 1800a51e271a3e747847642e50331dc0
+guid: 0a7430d3600569b46b32a4cc647d6fdf
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Calor
+    second: {fileID: 2100000, guid: 5642c2bf46318e347b56aa07f86403af, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Carne
+    second: {fileID: 2100000, guid: 4d42429b9deaa994b8051f98f3c8324e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lucecita
+    second: {fileID: 2100000, guid: b21499a1f2a29d34e83a81e5bbf207a4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metal
+    second: {fileID: 2100000, guid: 2c629c589fb63da44b25f96904b43876, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

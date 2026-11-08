@@ -50,7 +50,7 @@ public class Yahya : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y") * sensibilidadMouse;
 
         rotacionVertical -= mouseY;
-        rotacionVertical = Mathf.Clamp(rotacionVertical, -90f, 90f);
+        rotacionVertical = Mathf.Clamp(rotacionVertical, -80f, 80f);
 
         camaraJugador.localRotation = Quaternion.Euler(rotacionVertical, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);

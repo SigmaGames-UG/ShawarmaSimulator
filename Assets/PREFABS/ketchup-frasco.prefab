@@ -108,7 +108,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemRecogible
   nombreHerramienta: Ketchup
   iconoHerramienta: {fileID: 21300000, guid: 9862bdac9d151454e9166eedab261f04, type: 3}
-  posicionEnMano: {x: 0, y: 0, z: -5}
+  posicionEnMano: {x: 0, y: 0, z: 0}
   rotacionEnMano: {x: -90, y: 0, z: 0}
 --- !u!65 &-5881655284024260109
 BoxCollider:

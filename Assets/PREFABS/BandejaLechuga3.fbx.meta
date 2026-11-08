@@ -3,7 +3,22 @@ guid: 858d2972151f1b744b560d42703b4f6a
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lechuga
+    second: {fileID: 2100000, guid: 3241923022bd11c40be4c138eaf7d139, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: 776fb97306de15a4da882b563d316a7e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.001
+    second: {fileID: 2100000, guid: e1af9d734e77c7d44bc3e84e03dbecfe, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

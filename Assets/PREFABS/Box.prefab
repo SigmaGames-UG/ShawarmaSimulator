@@ -88,6 +88,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c862cb87f60fe1a47b3f6dc388fff22f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 312449398476179522}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c862cb87f60fe1a47b3f6dc388fff22f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5458460216741126818}
   m_SourcePrefab: {fileID: 100100000, guid: c862cb87f60fe1a47b3f6dc388fff22f, type: 3}
 --- !u!1 &4689823786687189072 stripped
 GameObject:
@@ -123,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemRecogible
   nombreHerramienta: Caja De Pedido
   iconoHerramienta: {fileID: 0}
-  posicionEnMano: {x: -20, y: -10, z: -5}
+  posicionEnMano: {x: 0, y: 0, z: 0}
   rotacionEnMano: {x: 0, y: -30, z: 0}
 --- !u!65 &9115422952977333798
 BoxCollider:
@@ -162,3 +165,30 @@ MonoBehaviour:
   useEmission: 0
   glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   glowIntensity: 0.25
+--- !u!54 &5458460216741126818
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4689823786687189072}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

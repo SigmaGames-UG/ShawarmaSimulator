@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: aea3263b8cdfd714492b4c42ba08064b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aea3263b8cdfd714492b4c42ba08064b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aea3263b8cdfd714492b4c42ba08064b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aea3263b8cdfd714492b4c42ba08064b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemRecogible
   nombreHerramienta: Lechuga
   iconoHerramienta: {fileID: 0}
-  posicionEnMano: {x: 0, y: 0, z: -5}
+  posicionEnMano: {x: 0, y: 0, z: 0}
   rotacionEnMano: {x: 0, y: 0, z: 0}
 --- !u!65 &-9130027028837995192
 BoxCollider:

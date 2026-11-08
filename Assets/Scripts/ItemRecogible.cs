@@ -6,6 +6,6 @@ public class ItemRecogible : MonoBehaviour
     public Sprite iconoHerramienta;
 
     [Header("Posicion en la mano")]
-    public Vector3 posicionEnMano;
+    public Vector3 posicionEnMano = new Vector3(0,0,0);
     public Vector3 rotacionEnMano;
 }
