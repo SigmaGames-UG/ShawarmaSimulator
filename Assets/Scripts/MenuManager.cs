@@ -25,7 +25,7 @@ public class MenuManager : MonoBehaviour
     public void BotonSalir()
     {
         
-        Debug.Log("¡Cerrando el juego!");
+       
         Application.Quit();
     }
 }

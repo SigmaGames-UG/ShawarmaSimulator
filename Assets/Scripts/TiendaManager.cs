@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class TiendaManager : MonoBehaviour
@@ -10,6 +11,7 @@ public class TiendaManager : MonoBehaviour
     public GameObject panelCarrito;
     public Transform puntoEntrega;
     public GameObject prefabCaja;
+   
 
     [Header("Ordenamiento de botones")]
     public Transform panelBotonesTienda;
@@ -85,6 +87,32 @@ public class TiendaManager : MonoBehaviour
         if (panelTienda != null) panelTienda.SetActive(true);
         if (panelCarrito != null) panelCarrito.SetActive(false);
         OrdenarBotones();
+        ActualizarEstadoBotonesTienda(); // <--- Llamamos a la verificación al abrir
+    }
+    private void ActualizarEstadoBotonesTienda()
+    {
+        if (botonesIngredientes == null) return;
+
+        foreach (var botonIngrediente in botonesIngredientes)
+        {
+            if (botonIngrediente != null)
+            {
+                // Buscamos el texto dentro del botón (TextMeshProUGUI)
+                TextMeshProUGUI textoBoton = botonIngrediente.GetComponentInChildren<TextMeshProUGUI>();
+
+                if (textoBoton != null)
+                {
+                    string nombreIngrediente = textoBoton.text; // Usa el texto que muestra el botón
+                    bool desbloqueado = EstaDesbloqueado(nombreIngrediente);
+
+                    Button btn = botonIngrediente.GetComponent<Button>();
+                    if (btn != null)
+                    {
+                        btn.interactable = desbloqueado;
+                    }
+                }
+            }
+        }
     }
 
     public void AbrirCarrito()
