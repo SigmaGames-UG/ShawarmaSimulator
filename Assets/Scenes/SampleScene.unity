@@ -2742,7 +2742,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArmadoShawarma
   puntoDeApoyo: {fileID: 113806528}
   alturaPorIngrediente: 0.05
-  prefabCarnePlana: {fileID: 8566741165701312285, guid: 7410b596e9c9f674cb8b1db27cd98dd8, type: 3}
+  prefabCarnePlana: {fileID: 9154270893278095264, guid: 89702ed623e53ac44982abab0ae8f26e, type: 3}
   prefabLechugaPlana: {fileID: 7978512460812885953, guid: d127c3de2741c324ab597e3bf9e0da18, type: 3}
   prefabKetchupPlano: {fileID: 1630805523135293297, guid: 62abb60b101df7b4bbcb3a8d06c071e1, type: 3}
   prefabMayoPlano: {fileID: 1630805523135293297, guid: 575ad791496c93c479648e3404944f85, type: 3}
@@ -4496,7 +4496,7 @@ MonoBehaviour:
   visualVacia: {fileID: 919132148283908234}
   visualMedio: {fileID: 1485957201254625645}
   visualLlena: {fileID: 491212564230683080}
-  prefabCarne: {fileID: 3173246976767871593, guid: 9d619fb00bb7974408d690addf8d2179, type: 3}
+  prefabCarne: {fileID: 9154270893278095264, guid: 89702ed623e53ac44982abab0ae8f26e, type: 3}
   nombreCarne: Carne
   iconoCarne: {fileID: 0}
 --- !u!1001 &853430741
@@ -4667,6 +4667,143 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 993652310}
   m_SourcePrefab: {fileID: 100100000, guid: 5d4dee7e2b3553b4faac53479b32df71, type: 3}
+--- !u!1 &922280783
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 922280784}
+  - component: {fileID: 922280786}
+  - component: {fileID: 922280785}
+  m_Layer: 5
+  m_Name: Dinero
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &922280784
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922280783}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1855747968}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -329, y: 99.1}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &922280785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922280783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 'DINERO:'
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &922280786
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922280783}
+  m_CullTransparentMesh: 1
 --- !u!4 &945822413 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 18691b0be619b55428519e6de946ddff, type: 3}
@@ -5707,10 +5844,15 @@ MonoBehaviour:
   panelBotonesTienda: {fileID: 1280544563}
   scriptCamara: {fileID: 2029399720}
   prefabKetchup: {fileID: 4661477740526883953}
+  precioKetchup: 15
   prefabtrompo: {fileID: 6600226557599697546, guid: 07abecb12e5b13f4587920995ed9a012, type: 3}
+  precioCarne: 15
   prefabMayo: {fileID: 317825287147282894}
+  precioMayo: 20
   prefabTarator: {fileID: 113275525781506502}
+  precioTarator: 25
   prefablechuga: {fileID: 1807553100619674947, guid: f586fe1b94fc03b43bdfc3654dcbd084, type: 3}
+  precioLechuga: 10
   iconKetchup: {fileID: 21300000, guid: 973369383263e8941aa1178899e334f2, type: 3}
   iconMayo: {fileID: 21300000, guid: 8938004c87340984b97db96a9ae4ba9c, type: 3}
   iconTarator: {fileID: 21300000, guid: 9862bdac9d151454e9166eedab261f04, type: 3}
@@ -10379,6 +10521,7 @@ RectTransform:
   - {fileID: 230003219}
   - {fileID: 310963733}
   - {fileID: 805097288}
+  - {fileID: 922280784}
   - {fileID: 1962310343}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10966,7 +11109,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ManagerExperiencia
   experienciaActual: 0
+  dineroActual: 50
   textoXpUI: {fileID: 805097286}
+  textoDineroUI: {fileID: 922280785}
   ingredientesDesbloqueados:
   - Carne
   - Lechuga

@@ -1,17 +1,26 @@
-using UnityEngine;
-using TMPro;
+using System;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 
 public class ManagerExperiencia : MonoBehaviour
 {
     public static ManagerExperiencia Instancia;
 
-    [Header("Datos de Experiencia")]
+    [Header("Datos de Experiencia y Economía")]
     public int experienciaActual = 0;
+    public int dineroActual = 50;
+
+    [Header("Referencias UI")]
     public TextMeshProUGUI textoXpUI;
+    public TextMeshProUGUI textoDineroUI;
 
     [Header("Ingredientes Desbloqueados")]
     public List<string> ingredientesDesbloqueados = new List<string>() { "Carne", "Lechuga", "Trompo" };
+
+    // Variable estática para llevar el control del shawarma que el jugador lleva en la mano
+    public static List<string> ingredientesShawarmaEnMano = new List<string>();
+
     void Awake()
     {
         if (Instancia == null)
@@ -25,55 +34,90 @@ public class ManagerExperiencia : MonoBehaviour
             return;
         }
 
-        // Forzamos estrictamente que la lista inicie únicamente con Carne y Lechuga
         InicializarIngredientesBase();
     }
 
     void Start()
     {
-        ActualizarInterfazXP();
+        ActualizarInterfaz();
     }
 
     public void InicializarIngredientesBase()
     {
-        // Nos aseguramos de que no se dupliquen y contenga solo los dos iniciales
         if (ingredientesDesbloqueados == null)
-        {
             ingredientesDesbloqueados = new List<string>();
-        }
 
-        // Si la lista está vacía o tiene elementos no deseados al iniciar, la reseteamos
         if (!ingredientesDesbloqueados.Contains("Carne"))
             ingredientesDesbloqueados.Add("Carne");
 
         if (!ingredientesDesbloqueados.Contains("Lechuga"))
             ingredientesDesbloqueados.Add("Lechuga");
+
+        if (!ingredientesDesbloqueados.Contains("Trompo"))
+            ingredientesDesbloqueados.Add("Trompo");
     }
 
     public void ModificarXP(int cantidad)
     {
         experienciaActual += cantidad;
         if (experienciaActual < 0) experienciaActual = 0;
-
-        ActualizarInterfazXP();
-        Debug.Log("Experiencia actualizada: " + experienciaActual);
+        ActualizarInterfaz();
     }
 
-    // Método para desbloquear nuevos ingredientes mediante la tienda o progresión
+    public void RegistrarVentaShawarma(int cantidadIngredientes)
+    {
+        if (cantidadIngredientes <= 0) cantidadIngredientes = 1;
+
+        int pago = 5 + ((cantidadIngredientes - 1) * 3);
+        dineroActual += pago;
+
+        int xpGanada = pago;
+        experienciaActual += xpGanada;
+
+        ActualizarInterfaz();
+        Debug.Log($"¡Shawarma correcto! Ganaste ${pago} y +{xpGanada} XP.");
+    }
+
+    public void RegistrarPedidoIncorrecto(int penalizacionXP = 10)
+    {
+        experienciaActual -= penalizacionXP;
+        if (experienciaActual < 0) experienciaActual = 0;
+
+        ActualizarInterfaz();
+        Debug.Log($"¡Pedido incorrecto! No se otorga dinero y se penaliza con -{penalizacionXP} XP.");
+    }
+
+    public bool GastarDinero(int costo)
+    {
+        if (dineroActual >= costo)
+        {
+            dineroActual -= costo;
+            ActualizarInterfaz();
+            return true;
+        }
+        else
+        {
+            Debug.Log("¡Fondos insuficientes!");
+            return false;
+        }
+    }
+
     public void DesbloquearIngrediente(string nuevoIngrediente)
     {
         if (!ingredientesDesbloqueados.Contains(nuevoIngrediente))
         {
             ingredientesDesbloqueados.Add(nuevoIngrediente);
-            Debug.Log("¡Ingrediente desbloqueado: " + nuevoIngrediente + "!");
         }
     }
 
-    void ActualizarInterfazXP()
+    void ActualizarInterfaz()
     {
         if (textoXpUI != null)
-        {
             textoXpUI.text = "XP: " + experienciaActual;
-        }
+
+        if (textoDineroUI != null)
+            textoDineroUI.text = "Dinero: $" + dineroActual;
     }
 }
+
+// Cuando cierras el shawarma, guardamos los ingredientes actuales en la mano del jugador

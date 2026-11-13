@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ArmadoShawarma : MonoBehaviour
@@ -100,12 +101,14 @@ public class ArmadoShawarma : MonoBehaviour
         // 1. Instanciamos el shawarma envuelto
         GameObject nuevoShawarma = Instantiate(prefabShawarmaTerminado);
 
-        // ¡AGREGAMOS IN CHILDREN ACÁ TAMBIÉN!
         DatosShawarma datos = nuevoShawarma.GetComponentInChildren<DatosShawarma>();
 
-        // 2. Creamos un arreglo normal de C# del tamaño exacto de tu pila
+        // ==========================================
+        // PASO 2: Creamos el arreglo y la lista temporal
+        // ==========================================
         int cantidadTotal = pilaIngredientes.Count;
         string[] arrayTemporal = new string[cantidadTotal];
+        List<string> listaParaExperiencia = new List<string>();
 
         // 3. Vaciamos las pilas paso a paso
         int indice = 0;
@@ -115,7 +118,12 @@ public class ArmadoShawarma : MonoBehaviour
             Destroy(pilaIngredientes.Pop());
 
             // Guardamos el texto (ej: "Lechuga") en nuestro arreglo temporal
-            arrayTemporal[indice] = nombresIngredientes.Pop();
+            string nombreIng = nombresIngredientes.Pop();
+            arrayTemporal[indice] = nombreIng;
+
+            // Añadimos también a la lista para validar la entrega contra el cliente
+            listaParaExperiencia.Add(nombreIng);
+
             indice++;
         }
 
@@ -125,10 +133,12 @@ public class ArmadoShawarma : MonoBehaviour
             datos.ingredientesContenidos = arrayTemporal;
         }
 
+        // Guardamos los ingredientes en la mano para que el Cliente los evalúe rigurosamente al entregar
+        ManagerExperiencia.ingredientesShawarmaEnMano = listaParaExperiencia;
+
         // 5. Se lo damos al jugador
         inventario.AgregarHerramienta(nombreShawarma, iconoShawarma, nuevoShawarma);
     }
-
     public int CantidadIngredientes()
     {
         return pilaIngredientes.Count;

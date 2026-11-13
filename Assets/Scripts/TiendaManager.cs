@@ -1,8 +1,12 @@
+
+using System;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
 public class TiendaManager : MonoBehaviour
 {
@@ -11,7 +15,6 @@ public class TiendaManager : MonoBehaviour
     public GameObject panelCarrito;
     public Transform puntoEntrega;
     public GameObject prefabCaja;
-   
 
     [Header("Ordenamiento de botones")]
     public Transform panelBotonesTienda;
@@ -20,12 +23,13 @@ public class TiendaManager : MonoBehaviour
 
     public MonoBehaviour scriptCamara;
 
-    [Header("Bases de Datos de Salsas")]
-    public GameObject prefabKetchup;
-    public GameObject prefabtrompo;
-    public GameObject prefabMayo;
-    public GameObject prefabTarator;
-    public GameObject prefablechuga;
+    [Header("Bases de Datos, Precios y Salsas")]
+    public GameObject prefabKetchup; public int precioKetchup = 15;
+    public GameObject prefabtrompo; public int precioCarne = 15;
+    public GameObject prefabMayo; public int precioMayo = 20;
+    public GameObject prefabTarator; public int precioTarator = 25;
+    public GameObject prefablechuga; public int precioLechuga = 10;
+
     public Sprite iconKetchup;
     public Sprite iconMayo;
     public Sprite iconTarator;
@@ -35,6 +39,7 @@ public class TiendaManager : MonoBehaviour
     private List<GameObject> carritoPrefabs = new List<GameObject>();
     private List<string> carritoNombres = new List<string>();
     private List<Sprite> carritoIconos = new List<Sprite>();
+    private List<int> carritoPrecios = new List<int>();
 
     void Update()
     {
@@ -87,8 +92,9 @@ public class TiendaManager : MonoBehaviour
         if (panelTienda != null) panelTienda.SetActive(true);
         if (panelCarrito != null) panelCarrito.SetActive(false);
         OrdenarBotones();
-        ActualizarEstadoBotonesTienda(); // <--- Llamamos a la verificación al abrir
+        ActualizarEstadoBotonesTienda();
     }
+
     private void ActualizarEstadoBotonesTienda()
     {
         if (botonesIngredientes == null) return;
@@ -97,12 +103,11 @@ public class TiendaManager : MonoBehaviour
         {
             if (botonIngrediente != null)
             {
-                // Buscamos el texto dentro del botón (TextMeshProUGUI)
                 TextMeshProUGUI textoBoton = botonIngrediente.GetComponentInChildren<TextMeshProUGUI>();
 
                 if (textoBoton != null)
                 {
-                    string nombreIngrediente = textoBoton.text; // Usa el texto que muestra el botón
+                    string nombreIngrediente = textoBoton.text;
                     bool desbloqueado = EstaDesbloqueado(nombreIngrediente);
 
                     Button btn = botonIngrediente.GetComponent<Button>();
@@ -130,13 +135,12 @@ public class TiendaManager : MonoBehaviour
         if (scriptCamara != null) scriptCamara.enabled = true;
     }
 
-    // --- MÉTODOS DE COMPRA DIRECTOS ---
-    // --- MÉTODOS DE COMPRA SEGUROS Y BLOQUEADOS ---
+    // --- MÉTODOS DE COMPRA CON PRECIOS Y VALIDACIÓN ---
     public void AñadirKetchup()
     {
         if (EstaDesbloqueado("Ketchup"))
         {
-            Agregar(prefabKetchup, "Ketchup", iconKetchup);
+            AgregarAlCarrito(prefabKetchup, "Ketchup", iconKetchup, precioKetchup);
         }
         else
         {
@@ -148,7 +152,7 @@ public class TiendaManager : MonoBehaviour
     {
         if (EstaDesbloqueado("Mayonesa"))
         {
-            Agregar(prefabMayo, "Mayonesa", iconMayo);
+            AgregarAlCarrito(prefabMayo, "Mayonesa", iconMayo, precioMayo);
         }
         else
         {
@@ -160,7 +164,7 @@ public class TiendaManager : MonoBehaviour
     {
         if (EstaDesbloqueado("Tarator"))
         {
-            Agregar(prefabTarator, "Tarator", iconTarator);
+            AgregarAlCarrito(prefabTarator, "Tarator", iconTarator, precioTarator);
         }
         else
         {
@@ -168,15 +172,13 @@ public class TiendaManager : MonoBehaviour
         }
     }
 
-    public void AñadirTrompo() 
-    { 
-        // Permitimos comprar si está desbloqueado como "Trompo" o "Carne", 
-        // o si queremos que la carne y la lechuga estén siempre disponibles al iniciar:
-        if (EstaDesbloqueado("Trompo") || EstaDesbloqueado("Carne") || true) // El "|| true" asegura que se pueda comprar de inmediato
-        { 
-            Agregar(prefabtrompo, "Trompo", icontrompo); 
+    public void AñadirTrompo()
+    {
+        if (EstaDesbloqueado("Trompo") || EstaDesbloqueado("Carne") || true)
+        {
+            AgregarAlCarrito(prefabtrompo, "Trompo", icontrompo, precioCarne);
         }
-        else 
+        else
         {
             Debug.Log("¡Trompo bloqueado!");
         }
@@ -186,7 +188,7 @@ public class TiendaManager : MonoBehaviour
     {
         if (EstaDesbloqueado("Lechuga"))
         {
-            Agregar(prefablechuga, "Lechuga", iconLechuga);
+            AgregarAlCarrito(prefablechuga, "Lechuga", iconLechuga, precioLechuga);
         }
         else
         {
@@ -194,7 +196,6 @@ public class TiendaManager : MonoBehaviour
         }
     }
 
-    // Comprobación conectada al ManagerExperiencia
     private bool EstaDesbloqueado(string nombreIngrediente)
     {
         if (ManagerExperiencia.Instancia != null && ManagerExperiencia.Instancia.ingredientesDesbloqueados != null)
@@ -204,7 +205,7 @@ public class TiendaManager : MonoBehaviour
         return true;
     }
 
-    private void Agregar(GameObject prefab, string nombre, Sprite icono)
+    private void AgregarAlCarrito(GameObject prefab, string nombre, Sprite icono, int precio)
     {
         if (prefab == null)
         {
@@ -215,7 +216,8 @@ public class TiendaManager : MonoBehaviour
         carritoPrefabs.Add(prefab);
         carritoNombres.Add(nombre);
         carritoIconos.Add(icono);
-        Debug.Log("Añadido al carrito: " + nombre);
+        carritoPrecios.Add(precio);
+        Debug.Log("Añadido al carrito: " + nombre + " ($" + precio + ")");
     }
 
     public void ComprarCarrito()
@@ -232,25 +234,41 @@ public class TiendaManager : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < carritoPrefabs.Count; i++)
+        // Sumar el costo total de los productos en el carrito
+        int costoTotal = 0;
+        foreach (int precio in carritoPrecios)
         {
-            Vector3 posicion = puntoEntrega.position + new Vector3(0, i * 0.6f, 0);
-            GameObject nuevaCaja = Instantiate(prefabCaja, posicion, Quaternion.identity);
-
-            CajaDelivery infoCaja = nuevaCaja.GetComponent<CajaDelivery>();
-            if (infoCaja != null)
-            {
-                infoCaja.prefabContenido = carritoPrefabs[i];
-                infoCaja.nombreContenido = carritoNombres[i];
-                infoCaja.iconoContenido = carritoIconos[i];
-            }
+            costoTotal += precio;
         }
 
-        Debug.Log("¡Compra realizada con éxito! Cajas generadas.");
-        carritoPrefabs.Clear();
-        carritoNombres.Clear();
-        carritoIconos.Clear();
+        // Intentar descontar el dinero mediante el ManagerExperiencia
+        if (ManagerExperiencia.Instancia != null && ManagerExperiencia.Instancia.GastarDinero(costoTotal))
+        {
+            for (int i = 0; i < carritoPrefabs.Count; i++)
+            {
+                Vector3 posicion = puntoEntrega.position + new Vector3(0, i * 0.6f, 0);
+                GameObject nuevaCaja = Instantiate(prefabCaja, posicion, Quaternion.identity);
 
-        CerrarCelular();
+                CajaDelivery infoCaja = nuevaCaja.GetComponent<CajaDelivery>();
+                if (infoCaja != null)
+                {
+                    infoCaja.prefabContenido = carritoPrefabs[i];
+                    infoCaja.nombreContenido = carritoNombres[i];
+                    infoCaja.iconoContenido = carritoIconos[i];
+                }
+            }
+
+            Debug.Log("¡Compra realizada con éxito por $" + costoTotal + "! Cajas generadas.");
+            carritoPrefabs.Clear();
+            carritoNombres.Clear();
+            carritoIconos.Clear();
+            carritoPrecios.Clear();
+
+            CerrarCelular();
+        }
+        else
+        {
+            Debug.Log("Compra cancelada: No tienes suficiente dinero.");
+        }
     }
 }

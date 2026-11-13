@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class InteraccionJugador : MonoBehaviour
 {
@@ -269,6 +270,8 @@ public class InteraccionJugador : MonoBehaviour
                         cliente.AceptarPedido();
                     }
                 }
+
+                // FASE 2: Entregar el Shawarma preparado
                 // FASE 2: Entregar el Shawarma preparado
                 else if (cliente.estadoActual == Cliente.Estado.EsperandoComida)
                 {
@@ -281,6 +284,7 @@ public class InteraccionJugador : MonoBehaviour
                     {
                         if (inventario != null && inventario.ObtenerNombreActual() == "Shawarma")
                         {
+                            // Atendemos al cliente correctamente sumando dinero y XP
                             cliente.AtenderClienteExitoso();
                             inventario.ConsumirHerramientaActual();
                         }
@@ -290,10 +294,9 @@ public class InteraccionJugador : MonoBehaviour
                         }
                     }
                 }
-            }
 
-            // CASO G: SUPERFICIE (MESA / PISO)
-            else
+                // CASO G: SUPERFICIE (MESA / PISO)
+                else
             {
                 if (inventario.TieneHerramientas())
                 {
@@ -380,4 +383,5 @@ public class InteraccionJugador : MonoBehaviour
             textoAviso.text = "";
         }
     }
+}
 }

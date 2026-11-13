@@ -1,11 +1,11 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
+using System.Collections.Generic;
 
 public class Cliente : MonoBehaviour
 {
-    // Definimos los estados claramente separados
     public enum Estado { EsperandoAtencion, EsperandoComida, Satisfecho, Enojado }
-    public Estado estadoActual = Estado.EsperandoAtencion; // Arranca esperando a que le tomes la orden
+    public Estado estadoActual = Estado.EsperandoAtencion;
 
     public System.Collections.Generic.Queue<string> pedido = new System.Collections.Generic.Queue<string>();
     public TextMeshProUGUI textoPedido;
@@ -31,16 +31,16 @@ public class Cliente : MonoBehaviour
         quiereComprar = compra;
         callbackSalida = alSalir;
         atendidoOFrustrado = false;
-        estadoActual = Estado.EsperandoAtencion; // Al spawnear, espera que le tomen la orden
+        estadoActual = Estado.EsperandoAtencion;
 
         if (quiereComprar)
         {
-            tiempoRestante = tiempoCompra; // 30 segundos totales de paciencia
+            tiempoRestante = tiempoCompra;
             GenerarPedidoNormal();
         }
         else
         {
-            tiempoRestante = tiempoNoCompra; // 5 segundos si solo mira
+            tiempoRestante = tiempoNoCompra;
             DesactivarPedidoVisual();
         }
     }
@@ -74,30 +74,23 @@ public class Cliente : MonoBehaviour
 
     private void GenerarPedidoNormal()
     {
-        // Limpiamos el pedido por si acaso
         pedido.Clear();
 
         if (ManagerExperiencia.Instancia != null && ManagerExperiencia.Instancia.ingredientesDesbloqueados != null)
         {
-            // Extraemos los ingredientes que el jugador YA tiene desbloqueados en este momento
             string[] ingredientesDisponibles = ManagerExperiencia.Instancia.ingredientesDesbloqueados.ToArray();
 
             if (ingredientesDisponibles.Length > 0)
             {
-                // Decidimos cuántos ingredientes tendrá el shawarma (entre 1 y la cantidad disponible)
-                int cantidadExtras = Random.Range(0, 3); // 0, 1 o 2 extras
+                int cantidadExtras = Random.Range(0, 3);
                 int totalDeseado = 1 + cantidadExtras;
 
                 if (totalDeseado > ingredientesDisponibles.Length)
                     totalDeseado = ingredientesDisponibles.Length;
 
-                // Añadimos ingredientes aleatorios de los que ya están desbloqueados
                 while (pedido.Count < totalDeseado)
                 {
                     string ingredienteAleatorio = ingredientesDisponibles[Random.Range(0, ingredientesDisponibles.Length)];
-
-                    // Evitamos duplicar el mismo ingrediente en un mismo pedido si lo deseamos más limpio
-                    // (O lo dejamos libre si querés que pueda pedir doble). Aquí lo encolamos directo:
                     pedido.Enqueue(ingredienteAleatorio);
                 }
             }
@@ -122,17 +115,15 @@ public class Cliente : MonoBehaviour
         }
     }
 
-    // --- NUEVO MÉTODO: El jugador toma la orden ---
     public void AceptarPedido()
     {
         if (estadoActual == Estado.EsperandoAtencion)
         {
-            estadoActual = Estado.EsperandoComida; // Pasa al estado de esperar que cocines el shawarma
+            estadoActual = Estado.EsperandoComida;
             Debug.Log("¡Orden tomada! Ahora prepara el shawarma.");
         }
     }
 
-    // --- MÉTODOS REQUERIDOS POR LA COLA ---
     public void MoveTo(Vector3 nuevaPosicion)
     {
         transform.position = nuevaPosicion;
@@ -142,36 +133,132 @@ public class Cliente : MonoBehaviour
     {
         if (pedido == null || pedido.Count == 0) return "Vacío";
 
-        // Convertimos la cola temporalmente a un array para unirlos con " + "
         string[] itemsPedido = pedido.ToArray();
         string resultado = string.Join(" + ", itemsPedido);
 
         return resultado;
     }
-    public void AtenderClienteExitoso()
-    {
-        if (!quiereComprar || atendidoOFrustrado || estadoActual != Estado.EsperandoComida) return;
 
+    // NUEVO: Valida si los ingredientes del shawarma entregado coinciden con el pedido
+    public void ValidarYAtenderShawarma(List<string> ingredientesShawarmaEntregado)
+    {
+        if (atendidoOFrustrado) return;
         atendidoOFrustrado = true;
 
-        // 1. Registramos la venta de dinero en el DayManager
-        if (DayManager.Instancia != null)
-        {
-            DayManager.Instancia.RegistrarVenta(150f);
-        }
+        // Convertimos la Queue del pedido a una lista para comparar fácilmente
+        List<string> listaPedidoCliente = new List<string>(pedido);
 
-        // 2. ¡Damos XP al jugador por hacer el pedido bien!
-        if (ManagerExperiencia.Instancia != null)
+        // Verificamos si tienen la misma cantidad y los mismos ingredientes
+        bool esCorrecto = true;
+
+        if (ingredientesShawarmaEntregado == null || ingredientesShawarmaEntregado.Count != listaPedidoCliente.Count)
         {
-            ManagerExperiencia.Instancia.ModificarXP(25); // Suma 25 XP por venta exitosa
-            Debug.Log("¡Shawarma entregado con éxito! +25 XP y dinero registrado.");
+            esCorrecto = false;
         }
         else
         {
-            Debug.Log("¡Shawarma entregado con éxito!");
+            // Creamos copias temporales para comparar elementos
+            List<string> copiaCliente = new List<string>(listaPedidoCliente);
+            foreach (string ingrediente in ingredientesShawarmaEntregado)
+            {
+                if (copiaCliente.Contains(ingrediente))
+                {
+                    copiaCliente.Remove(ingrediente);
+                }
+                else
+                {
+                    esCorrecto = false;
+                    break;
+                }
+            }
         }
 
-        // 3. Limpiamos y removemos al cliente de la cola
+        // Aplicamos recompensas o penalizaciones según el resultado
+        if (esCorrecto)
+        {
+            int cantidadIngredientes = listaPedidoCliente.Count;
+            if (ManagerExperiencia.Instancia != null)
+            {
+                ManagerExperiencia.Instancia.RegistrarVentaShawarma(cantidadIngredientes);
+            }
+            Debug.Log("¡Pedido correcto entregado con éxito!");
+        }
+        else
+        {
+            if (ManagerExperiencia.Instancia != null)
+            {
+                ManagerExperiencia.Instancia.RegistrarPedidoIncorrecto(10); // Resta 10 XP y no da dinero
+            }
+            Debug.Log("¡Pedido incorrecto! El cliente se va molesto.");
+        }
+
+        // Retiramos al cliente de la cola y lo destruimos
+        if (miColaCliente != null)
+        {
+            miColaCliente.DestroyClientAtendido(this);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    // Método anterior adaptado por compatibilidad por si se llama directo
+    public void AtenderClienteExitoso()
+    {
+        if (atendidoOFrustrado) return;
+        atendidoOFrustrado = true;
+
+        List<string> listaPedidoCliente = new List<string>(pedido);
+        List<string> ingredientesEntregados = ManagerExperiencia.ingredientesShawarmaEnMano;
+
+        bool esCorrecto = true;
+
+        // 1. Validamos que tengan la misma cantidad exacta de ingredientes
+        if (ingredientesEntregados == null || ingredientesEntregados.Count != listaPedidoCliente.Count)
+        {
+            esCorrecto = false;
+        }
+        else
+        {
+            // 2. Validamos que contengan exactamente los mismos elementos (sin importar el orden)
+            List<string> copiaCliente = new List<string>(listaPedidoCliente);
+            foreach (string ingrediente in ingredientesEntregados)
+            {
+                if (copiaCliente.Contains(ingrediente))
+                {
+                    copiaCliente.Remove(ingrediente);
+                }
+                else
+                {
+                    esCorrecto = false;
+                    break;
+                }
+            }
+        }
+
+        // 3. Otorgamos recompensas o penalizaciones según el resultado estricto
+        if (esCorrecto)
+        {
+            int cantidadIngredientes = listaPedidoCliente.Count;
+            if (ManagerExperiencia.Instancia != null)
+            {
+                ManagerExperiencia.Instancia.RegistrarVentaShawarma(cantidadIngredientes);
+            }
+            Debug.Log("¡Pedido 100% correcto entregado con éxito!");
+        }
+        else
+        {
+            if (ManagerExperiencia.Instancia != null)
+            {
+                ManagerExperiencia.Instancia.RegistrarPedidoIncorrecto(10); // Resta 10 XP y 0 dinero
+            }
+            Debug.Log("¡Pedido incorrecto o incompleto! Se penaliza al jugador.");
+        }
+
+        // Limpiamos la mano
+        ManagerExperiencia.ingredientesShawarmaEnMano.Clear();
+
         if (miColaCliente != null)
         {
             miColaCliente.DestroyClientAtendido(this);

@@ -1,0 +1,118 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8344019134107146993
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 217.08147
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -119.1987
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -200.12726
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6710102
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.4698463
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.4698463
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.32898986
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -70
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      propertyPath: m_Name
+      value: carnecocida
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5297097423412176228}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3985356103556707128}
+  m_SourcePrefab: {fileID: 100100000, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+--- !u!1 &9154270893278095264 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b4d174879c09c444cb54356ad0bac891, type: 3}
+  m_PrefabInstance: {fileID: 8344019134107146993}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-5297097423412176228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9154270893278095264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebc513a5c87f66740acae238ecd5feb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemRecogible
+  nombreHerramienta: carne
+  iconoHerramienta: {fileID: 0}
+  posicionEnMano: {x: 0, y: 0, z: 0}
+  rotacionEnMano: {x: 0, y: 0, z: 0}
+--- !u!114 &3985356103556707128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9154270893278095264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19833cdf5e5c5f944a30bcae105e61b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AimGlow
+  outlineMaterial: {fileID: 2100000, guid: eeae389f2198a8e41b234c97c94f50f2, type: 2}
+  useEmission: 1
+  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  glowIntensity: 3
