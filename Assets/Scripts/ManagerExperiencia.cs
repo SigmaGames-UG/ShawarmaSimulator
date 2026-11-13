@@ -113,10 +113,10 @@ public class ManagerExperiencia : MonoBehaviour
     void ActualizarInterfaz()
     {
         if (textoXpUI != null)
-            textoXpUI.text = "XP: " + experienciaActual;
+            textoXpUI.text = "" + experienciaActual;
 
         if (textoDineroUI != null)
-            textoDineroUI.text = "Dinero: $" + dineroActual;
+            textoDineroUI.text = "$" + dineroActual;
     }
 }
 
