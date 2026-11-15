@@ -32,6 +32,13 @@ public class PlayerDeath : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         characterController = GetComponent<CharacterController>();
         colliderFisico = GetComponent<CapsuleCollider>();
+        if (colliderFisico == null)
+        {
+            Debug.LogError(
+                "PLAYER: Falta CapsuleCollider en el mismo GameObject.",
+                this
+            );
+        }
         movimiento = GetComponent<Yahya>();
 
         if (rb != null)

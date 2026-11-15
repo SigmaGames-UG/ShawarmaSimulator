@@ -1,24 +1,56 @@
+
 using System;
 
 public class DiaStats : IComparable<DiaStats>
 {
     public int numeroDia;
-    public float dineroGanado;
+
+    public int clientesAtendidos;
     public int shawarmasVendidos;
     public int celebridadesAtendidas;
 
-    public DiaStats(int numeroDia, float dineroGanado, int shawarmasVendidos, int celebridadesAtendidas)
+    public float dineroGanado;
+    public float dineroGastado;
+
+    public int xpGanada;
+    public int xpPerdida;
+
+    public int PedidosIncorrectos =>
+        Math.Max(0, clientesAtendidos - shawarmasVendidos);
+
+    public float BalanceNeto =>
+        dineroGanado - dineroGastado;
+
+    public int BalanceXP =>
+        xpGanada - xpPerdida;
+
+    public DiaStats(
+        int numeroDia,
+        int clientesAtendidos,
+        int shawarmasVendidos,
+        int celebridadesAtendidas,
+        float dineroGanado,
+        float dineroGastado,
+        int xpGanada,
+        int xpPerdida)
     {
         this.numeroDia = numeroDia;
-        this.dineroGanado = dineroGanado;
+        this.clientesAtendidos = clientesAtendidos;
         this.shawarmasVendidos = shawarmasVendidos;
         this.celebridadesAtendidas = celebridadesAtendidas;
+
+        this.dineroGanado = dineroGanado;
+        this.dineroGastado = dineroGastado;
+
+        this.xpGanada = xpGanada;
+        this.xpPerdida = xpPerdida;
     }
 
-    // Esto le indica al árbol AVL cómo comparar y ordenar los días cronológicamente
     public int CompareTo(DiaStats otro)
     {
-        if (otro == null) return 1;
-        return this.numeroDia.CompareTo(otro.numeroDia);
+        if (otro == null)
+            return 1;
+
+        return numeroDia.CompareTo(otro.numeroDia);
     }
 }

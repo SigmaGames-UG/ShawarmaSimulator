@@ -84,7 +84,9 @@ public class ClienteQueue : MonoBehaviour
 
         Quaternion rotacionFinal = spawnPoint.rotation * Quaternion.Euler(rotacionExtraOffset);
 
-        Cliente newClient = Instantiate(prefabAleatorio, posicionEnFila, rotacionFinal);
+        IPrototipo<Cliente> prototipo = prefabAleatorio;
+
+        Cliente newClient = prototipo.Clonar(posicionEnFila, rotacionFinal);
 
         // Añadimos a ambas estructuras
         clientQueue.Enqueue(newClient);

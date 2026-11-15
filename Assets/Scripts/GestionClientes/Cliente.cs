@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Cliente : MonoBehaviour
+public class Cliente : MonoBehaviour, IPrototipo<Cliente>
 {
     public enum Estado { EsperandoAtencion, EsperandoComida, Satisfecho, Enojado }
     public Estado estadoActual = Estado.EsperandoAtencion;
@@ -15,6 +15,13 @@ public class Cliente : MonoBehaviour
     private System.Action callbackSalida;
     private bool atendidoOFrustrado = false;
     private int cantidadIngredientesPedido = 0;
+    
+    // aca empieza el patron Prototype
+    public Cliente Clonar(Vector3 posicion, Quaternion rotacion)
+    {
+        Cliente clon = Instantiate(this, posicion, rotacion);
+        return clon;
+    }
 
     public ClienteQueue miColaCliente;
 
@@ -192,6 +199,11 @@ public class Cliente : MonoBehaviour
             Debug.Log("¡Pedido incorrecto! El cliente se va molesto.");
         }
 
+        if (DayManager.Instancia != null)
+        {
+            DayManager.Instancia.RegistrarClienteAtendido();
+        }
+
         // Retiramos al cliente de la cola y lo destruimos
         if (miColaCliente != null)
         {
@@ -254,6 +266,11 @@ public class Cliente : MonoBehaviour
                 ManagerExperiencia.Instancia.RegistrarPedidoIncorrecto(10); // Resta 10 XP y 0 dinero
             }
             Debug.Log("¡Pedido incorrecto o incompleto! Se penaliza al jugador.");
+        }
+
+        if (DayManager.Instancia != null)
+        {
+            DayManager.Instancia.RegistrarClienteAtendido();
         }
 
         // Limpiamos la mano

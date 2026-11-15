@@ -1,5 +1,5 @@
 using System;
-
+using System.Collections.Generic;
 public class BST<T> where T : IComparable<T>
 {
     protected TreeNode<T> root;
@@ -43,4 +43,27 @@ public class BST<T> where T : IComparable<T>
     {
         root = null;
     }
+
+
+    public List<T> ObtenerValoresEnOrden()
+    {
+        List<T> resultado = new List<T>();
+
+        RecorrerEnOrden(root, resultado);
+
+        return resultado;
+    }
+
+    private void RecorrerEnOrden(TreeNode<T> nodo, List<T> resultado)
+    {
+        if (nodo == null)
+            return;
+
+        RecorrerEnOrden(nodo.Left, resultado);
+
+        resultado.Add(nodo.Value);
+
+        RecorrerEnOrden(nodo.Right, resultado);
+    }
+
 }

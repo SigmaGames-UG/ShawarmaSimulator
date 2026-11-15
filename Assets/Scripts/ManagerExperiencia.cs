@@ -57,50 +57,91 @@ public class ManagerExperiencia : MonoBehaviour
             ingredientesDesbloqueados.Add("Trompo");
     }
 
+
     public void ModificarXP(int cantidad)
     {
+        int xpAnterior = experienciaActual;
+
         experienciaActual += cantidad;
-        if (experienciaActual < 0) experienciaActual = 0;
+
+        if (experienciaActual < 0)
+            experienciaActual = 0;
+
+        int cambioReal = experienciaActual - xpAnterior;
+
+        if (DayManager.Instancia != null)
+        {
+            DayManager.Instancia.RegistrarCambioXP(cambioReal);
+        }
+
         ActualizarInterfaz();
     }
+
+
+
 
     public void RegistrarVentaShawarma(int cantidadIngredientes)
     {
-        if (cantidadIngredientes <= 0) cantidadIngredientes = 1;
+        if (cantidadIngredientes <= 0)
+            cantidadIngredientes = 1;
 
         int pago = 5 + ((cantidadIngredientes - 1) * 3);
+
         dineroActual += pago;
 
         int xpGanada = pago;
-        experienciaActual += xpGanada;
+        ModificarXP(xpGanada);
+
+        // Registramos ingreso y pedido correcto.
+        if (DayManager.Instancia != null)
+        {
+            DayManager.Instancia.RegistrarVenta(pago);
+        }
 
         ActualizarInterfaz();
-        Debug.Log($"¡Shawarma correcto! Ganaste ${pago} y +{xpGanada} XP.");
+
+        Debug.Log($"Venta correcta: +${pago} y +{xpGanada} XP");
     }
+
+
+
 
     public void RegistrarPedidoIncorrecto(int penalizacionXP = 10)
     {
-        experienciaActual -= penalizacionXP;
-        if (experienciaActual < 0) experienciaActual = 0;
+        ModificarXP(-Mathf.Abs(penalizacionXP));
 
-        ActualizarInterfaz();
-        Debug.Log($"¡Pedido incorrecto! No se otorga dinero y se penaliza con -{penalizacionXP} XP.");
+        Debug.Log(
+            "Pedido incorrecto. Sin dinero y con penalización de XP."
+        );
     }
+
+
 
     public bool GastarDinero(int costo)
     {
+        if (costo < 0)
+            return false;
+
         if (dineroActual >= costo)
         {
             dineroActual -= costo;
+
+            if (DayManager.Instancia != null)
+            {
+                DayManager.Instancia.RegistrarGasto(costo);
+            }
+
             ActualizarInterfaz();
+
+            Debug.Log("Compra realizada: -$" + costo);
+
             return true;
         }
-        else
-        {
-            Debug.Log("¡Fondos insuficientes!");
-            return false;
-        }
+
+        Debug.Log("Fondos insuficientes");
+        return false;
     }
+
 
     public void DesbloquearIngrediente(string nuevoIngrediente)
     {

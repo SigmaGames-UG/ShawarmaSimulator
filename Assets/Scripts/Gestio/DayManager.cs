@@ -1,62 +1,96 @@
+
 using UnityEngine;
 using TMPro;
+using System.Text;
 
 public class DayManager : MonoBehaviour
 {
     public static DayManager Instancia;
 
-    [Header("UI del Reloj y Avisos")]
-    public TextMeshProUGUI textoRelojUnico; // Un solo componente de texto que cambia de estado
+    [Header("Interfaz")]
+    public TextMeshProUGUI textoRelojUnico;
+    public TextMeshProUGUI textoBalanceUI;
+    public GameObject panelEstadisticas;
+    private bool panelAbierto = false;
 
-    [Header("Configuración de Tiempo")]
+    [Header("Tiempo")]
     public int horaActual = 11;
     public int minutoActual = 0;
+
     private bool localAbierto = false;
     private bool esperandoCierre = false;
     private float acumuladorTiempo = 0f;
 
-    // 1 minuto real = 1 hora in-game -> 1 segundo real = 1 minuto in-game
     private const float segundosPorMinutoJuego = 1f;
 
-    [Header("Estadísticas del Día Actual")]
+    public bool EstaAbierto => localAbierto;
+
+    [Header("Día")]
     public int diaActual = 1;
-    public float dineroHoy = 0f;
+
+    [Header("Estadísticas Diarias")]
+    public int clientesAtendidosHoy = 0;
     public int shawarmasHoy = 0;
     public int celebridadesHoy = 0;
 
-    // Árbol AVL para el sistema de DataDay y resumen semanal
-    private AVL<DiaStats> historialDiasAVL = new AVL<DiaStats>();
+    public float dineroHoy = 0f;
+    public float dineroGastadoHoy = 0f;
+
+    public int xpGanadaHoy = 0;
+    public int xpPerdidaHoy = 0;
+
+    // Historial semanal ordenado por número de día.
+    private AVL<DiaStats> historialDiasAVL =
+        new AVL<DiaStats>();
 
     void Awake()
     {
-        if (Instancia == null) Instancia = this;
-        else Destroy(gameObject);
+        if (Instancia == null)
+            Instancia = this;
+        else
+            Destroy(gameObject);
     }
 
     void Start()
     {
-        // Al arrancar, mostramos el mensaje inicial requerido
         if (textoRelojUnico != null)
-        {
             textoRelojUnico.text = "El día aún no comienza";
-        }
+
+        if (textoBalanceUI != null)
+            textoBalanceUI.text = "";
     }
 
     void Update()
     {
-        // 1. Abrir el local con la tecla G (cuando el día aún no arranca)
-        if (!localAbierto && !esperandoCierre && Input.GetKeyDown(KeyCode.G))
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (panelAbierto)
+                CerrarPanelEstadisticas();
+            else
+                MostrarEstadisticasEnPausa();
+
+            return;
+        }
+
+        if (panelAbierto) return;
+
+        // Iniciar el día.
+        if (!localAbierto && !esperandoCierre &&
+            Input.GetKeyDown(KeyCode.G))
         {
             AbrirLocal();
         }
 
-        // 2. Si el local está abierto, corre el tiempo del temporizador
+        // Avanzar el reloj solamente con el local abierto.
         if (localAbierto)
         {
             acumuladorTiempo += Time.deltaTime;
-            if (acumuladorTiempo >= segundosPorMinutoJuego)
+
+            while (acumuladorTiempo >= segundosPorMinutoJuego
+                   && localAbierto)
             {
-                acumuladorTiempo = 0f;
+                acumuladorTiempo -= segundosPorMinutoJuego;
                 minutoActual++;
 
                 if (minutoActual >= 60)
@@ -64,7 +98,6 @@ public class DayManager : MonoBehaviour
                     minutoActual = 0;
                     horaActual++;
 
-                    // A las 00:00 (12 de la noche) se detiene el tiempo y cambia el cartel
                     if (horaActual >= 24)
                     {
                         horaActual = 0;
@@ -72,12 +105,14 @@ public class DayManager : MonoBehaviour
                         LlegadaMedianoche();
                     }
                 }
-                ActualizarInterfazReloj();
             }
+
+            ActualizarInterfazReloj();
         }
 
-        // 3. Terminar el día presionando G cuando llega a las 00:00
-        if (esperandoCierre && Input.GetKeyDown(KeyCode.G))
+        // Guardar el día cuando llega la medianoche.
+        if (esperandoCierre &&
+            Input.GetKeyDown(KeyCode.G))
         {
             TerminarDia();
         }
@@ -85,11 +120,20 @@ public class DayManager : MonoBehaviour
 
     void AbrirLocal()
     {
+        ReiniciarEstadisticasDiarias();
+
         localAbierto = true;
+        esperandoCierre = false;
         horaActual = 11;
         minutoActual = 0;
+        acumuladorTiempo = 0f;
+
+        if (textoBalanceUI != null)
+            textoBalanceUI.text = "";
+
         ActualizarInterfazReloj();
-        Debug.Log("¡Local abierto! Comienza el día " + diaActual);
+
+        Debug.Log("Comienza el día " + diaActual);
     }
 
     void LlegadaMedianoche()
@@ -97,81 +141,237 @@ public class DayManager : MonoBehaviour
         localAbierto = false;
         esperandoCierre = true;
 
-        // Cambiamos el texto al mensaje de cierre requerido
         if (textoRelojUnico != null)
-        {
-            textoRelojUnico.text = "Presione G para acabar con el día";
-        }
-        Debug.Log("Medianoche alcanzada. Pulsa G para finalizar el día.");
+            textoRelojUnico.text =
+                "Presione G para acabar con el día";
+
+        Debug.Log("El local cerró. Ya no se registran estadísticas.");
     }
+
+    // REGISTROS DURANTE EL DÍA
+
+    public void RegistrarClienteAtendido()
+    {
+        if (!localAbierto) return;
+
+        clientesAtendidosHoy++;
+    }
+
+    public void RegistrarVenta(float dinero, bool esCelebridad = false)
+    {
+        if (!localAbierto) return;
+
+        dineroHoy += dinero;
+        shawarmasHoy++;
+
+        if (esCelebridad)
+            celebridadesHoy++;
+    }
+
+    public void RegistrarGasto(float dinero)
+    {
+        if (!localAbierto || dinero <= 0) return;
+
+        dineroGastadoHoy += dinero;
+    }
+
+    public void RegistrarCambioXP(int cantidad)
+    {
+        if (!localAbierto) return;
+
+        if (cantidad > 0)
+            xpGanadaHoy += cantidad;
+        else if (cantidad < 0)
+            xpPerdidaHoy -= cantidad;
+    }
+
+    // CIERRE Y GUARDADO
 
     void TerminarDia()
     {
         esperandoCierre = false;
 
-        // Guardamos los datos del día en el Árbol AVL
-        DiaStats estadisticasDia = new DiaStats(diaActual, dineroHoy, shawarmasHoy, celebridadesHoy);
+        DiaStats estadisticasDia = new DiaStats(
+            diaActual,
+            clientesAtendidosHoy,
+            shawarmasHoy,
+            celebridadesHoy,
+            dineroHoy,
+            dineroGastadoHoy,
+            xpGanadaHoy,
+            xpPerdidaHoy
+        );
+
         historialDiasAVL.Insert(estadisticasDia);
 
-        Debug.Log($"--- RESUMEN DÍA {diaActual} GUARDADO EN AVL ---");
-        Debug.Log($"Dinero: ${dineroHoy} | Shawarmas: {shawarmasHoy} | Celebridades: {celebridadesHoy}");
+        string reporteDia = CrearReporteDia(estadisticasDia);
 
-        // Si es el séptimo día, mostramos el resumen semanal
+        Debug.Log(reporteDia);
+
         if (diaActual >= 7)
         {
-            GenerarResumenSemanal();
+            string reporteSemanal = GenerarResumenSemanal();
+
+            Debug.Log(reporteSemanal);
+
+            if (textoBalanceUI != null)
+                textoBalanceUI.text =
+                    reporteDia + "\n\n" + reporteSemanal;
+
+            // Nueva semana: evitamos días duplicados.
+            historialDiasAVL.Clear();
+            diaActual = 1;
         }
         else
         {
-            // Preparamos el siguiente día
+            if (textoBalanceUI != null)
+                textoBalanceUI.text = reporteDia;
+
             diaActual++;
-            horaActual = 11;
-            minutoActual = 0;
-            dineroHoy = 0f;
-            shawarmasHoy = 0;
-            celebridadesHoy = 0;
-
-            // Volvemos a poner el estado inicial para el nuevo día
-            if (textoRelojUnico != null)
-            {
-                textoRelojUnico.text = "El día aún no comienza";
-            }
         }
-    }
 
-    void GenerarResumenSemanal()
-    {
-        Debug.Log("=== ¡FIN DE LA SEMANA! BALANCE GENERAL ===");
+        ReiniciarEstadisticasDiarias();
 
-        // Reiniciamos el ciclo semanal
-        diaActual = 1;
         horaActual = 11;
         minutoActual = 0;
-        dineroHoy = 0f;
+        acumuladorTiempo = 0f;
+
+        if (textoRelojUnico != null)
+            textoRelojUnico.text = "El día aún no comienza";
+
+        AbrirPanelEstadisticas();
+    }
+
+    string CrearReporteDia(DiaStats dia)
+    {
+        return
+            $"=== CIERRE DÍA {dia.numeroDia} ===\n" +
+            $"Clientes atendidos: {dia.clientesAtendidos}\n" +
+            $"Pedidos correctos: {dia.shawarmasVendidos}\n" +
+            $"Pedidos incorrectos: {dia.PedidosIncorrectos}\n" +
+            $"Ingresos: ${dia.dineroGanado:0.##}\n" +
+            $"Gastos: ${dia.dineroGastado:0.##}\n" +
+            $"Balance: ${dia.BalanceNeto:0.##}\n" +
+            $"XP ganada: {dia.xpGanada}\n" +
+            $"XP perdida: {dia.xpPerdida}\n" +
+            $"Balance XP: {dia.BalanceXP}";
+    }
+
+    string GenerarResumenSemanal()
+    {
+        var dias = historialDiasAVL.ObtenerValoresEnOrden();
+
+        int totalAtendidos = 0;
+        int totalCorrectos = 0;
+        int totalXPGanada = 0;
+        int totalXPPerdida = 0;
+
+        float totalIngresos = 0f;
+        float totalGastos = 0f;
+
+        StringBuilder reporte = new StringBuilder();
+
+        reporte.AppendLine("=== BALANCE SEMANAL ===");
+
+        foreach (DiaStats dia in dias)
+        {
+            reporte.AppendLine(
+                $"Día {dia.numeroDia}: " +
+                $"{dia.clientesAtendidos} atendidos, " +
+                $"{dia.shawarmasVendidos} correctos, " +
+                $"balance ${dia.BalanceNeto:0.##}"
+            );
+
+            totalAtendidos += dia.clientesAtendidos;
+            totalCorrectos += dia.shawarmasVendidos;
+            totalIngresos += dia.dineroGanado;
+            totalGastos += dia.dineroGastado;
+
+            totalXPGanada += dia.xpGanada;
+            totalXPPerdida += dia.xpPerdida;
+        }
+
+        reporte.AppendLine("--- TOTALES ---");
+        reporte.AppendLine($"Clientes: {totalAtendidos}");
+        reporte.AppendLine($"Correctos: {totalCorrectos}");
+        reporte.AppendLine(
+            $"Incorrectos: {totalAtendidos - totalCorrectos}"
+        );
+        reporte.AppendLine($"Ingresos: ${totalIngresos:0.##}");
+        reporte.AppendLine($"Gastos: ${totalGastos:0.##}");
+        reporte.AppendLine(
+            $"Balance neto: ${totalIngresos - totalGastos:0.##}"
+        );
+        reporte.AppendLine($"XP ganada: {totalXPGanada}");
+        reporte.AppendLine($"XP perdida: {totalXPPerdida}");
+        reporte.AppendLine(
+            $"Balance XP: {totalXPGanada - totalXPPerdida}"
+        );
+
+        return reporte.ToString();
+    }
+
+    void ReiniciarEstadisticasDiarias()
+    {
+        clientesAtendidosHoy = 0;
         shawarmasHoy = 0;
         celebridadesHoy = 0;
 
-        if (textoRelojUnico != null)
-        {
-            textoRelojUnico.text = "El día aún no comienza";
-        }
+        dineroHoy = 0f;
+        dineroGastadoHoy = 0f;
+
+        xpGanadaHoy = 0;
+        xpPerdidaHoy = 0;
     }
 
     void ActualizarInterfazReloj()
     {
         if (textoRelojUnico != null && localAbierto)
         {
-            // Muestra el formato de hora HH:mm y el día actual
-            textoRelojUnico.text = $"{horaActual:00}:{minutoActual:00} (Día {diaActual})";
+            textoRelojUnico.text =
+                $"{horaActual:00}:{minutoActual:00} (Día {diaActual})";
         }
     }
 
-    // Método para registrar ventas durante el juego
-    public void RegistrarVenta(float dinero, bool esCelebridad = false)
+
+    public void MostrarEstadisticasEnPausa()
     {
-        if (!localAbierto) return;
-        dineroHoy += dinero;
-        shawarmasHoy++;
-        if (esCelebridad) celebridadesHoy++;
+        if (textoBalanceUI == null) return;
+
+        int incorrectos = Mathf.Max(
+            0, clientesAtendidosHoy - shawarmasHoy
+        );
+
+        textoBalanceUI.text =
+            $"=== DIA {diaActual} ===\n\n" +
+            $"Clientes atendidos: {clientesAtendidosHoy}\n" +
+            $"Pedidos correctos: {shawarmasHoy}\n" +
+            $"Pedidos incorrectos: {incorrectos}\n\n" +
+            $"Dinero ganado: ${dineroHoy}\n" +
+            $"Dinero gastado: ${dineroGastadoHoy}\n" +
+            $"Balance: ${dineroHoy - dineroGastadoHoy}\n\n" +
+            $"XP ganada: {xpGanadaHoy}\n" +
+            $"XP perdida: {xpPerdidaHoy}";
+
+        AbrirPanelEstadisticas();
     }
+
+    public void AbrirPanelEstadisticas()
+    {
+        if (panelEstadisticas == null) return;
+
+        panelEstadisticas.SetActive(true);
+        panelAbierto = true;
+        Time.timeScale = 0f;
+    }
+
+    public void CerrarPanelEstadisticas()
+    {
+        if (panelEstadisticas != null)
+            panelEstadisticas.SetActive(false);
+
+        panelAbierto = false;
+        Time.timeScale = 1f;
+    }
+
 }
