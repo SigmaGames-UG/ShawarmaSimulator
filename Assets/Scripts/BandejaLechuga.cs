@@ -17,7 +17,6 @@ public class BandejaLechuga : MonoBehaviour
 
     void Start()
     {
-        // Al empezar el juego, la bandeja arranca vacía
         ActualizarVisuales();
     }
 
@@ -33,23 +32,20 @@ public class BandejaLechuga : MonoBehaviour
         {
             porcionesActuales--;
 
-            // Creamos la porción y la mandamos a la mano
             GameObject nuevaPorcion = Instantiate(prefabPorcion);
             inventario.AgregarHerramienta(nombrePorcion, iconoPorcion, nuevaPorcion);
 
-            ActualizarVisuales(); // Revisamos si hay que cambiar el asset
+            ActualizarVisuales(); 
         }
     }
 
 
     private void ActualizarVisuales()
     {
-        // 1. Apagamos todas por las dudas
         if (visualVacia != null) visualVacia.SetActive(false);
         if (visualMedio != null) visualMedio.SetActive(false);
         if (visualLlena != null) visualLlena.SetActive(false);
 
-        // 2. Prendemos la que corresponde
         if (porcionesActuales == 0)
         {
             if (visualVacia != null) visualVacia.SetActive(true);
@@ -58,7 +54,7 @@ public class BandejaLechuga : MonoBehaviour
         {
             if (visualMedio != null) visualMedio.SetActive(true);
         }
-        else // De 5 a 8 porciones
+        else 
         {
             if (visualLlena != null) visualLlena.SetActive(true);
         }

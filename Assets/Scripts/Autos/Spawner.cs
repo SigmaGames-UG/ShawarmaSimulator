@@ -20,13 +20,11 @@ public class CarSpawner : MonoBehaviour
 
     private void Awake()
     {
-        //implementación ESTÁTICA.
         autosDictionary =
             new SimpleArrayDictionary<string, CarData>(
                 autos.Length
             );
 
-        // Cargamos los datos
         for (int i = 0; i < autos.Length; i++)
         {
             autosDictionary.Add(

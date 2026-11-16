@@ -20,16 +20,15 @@ public class ClienteQueue : MonoBehaviour
     [SerializeField] private Vector3 rotacionExtraOffset = new Vector3(0f, 0f, 90f);
 
     [Header("Configuración de la Fila y Spawn")]
-    public int maxClientesEnCola = 3;        // Máximo de clientes permitidos en la fila al mismo tiempo
-    public float separacionFila = 2.5f;      // Distancia de separación entre cada cliente en la fila
-    public float intervaloSpawn = 20f;       // Tiempo entre cada spawn automático
+    public int maxClientesEnCola = 3;        
+    public float separacionFila = 2.5f;      
+    public float intervaloSpawn = 20f;       
     [Range(0f, 1f)] public float probabilidadCompra = 0.7f;
     public float tiempoEsperaComprador = 30f;
     public float tiempoEsperaNoComprador = 5f;
 
     private float temporizadorSpawn = 0f;
 
-    // Cola lógica original y lista directa para controlar las posiciones físicas sin fallos
     private SimpleLinkedQueue<Cliente> clientQueue = new SimpleLinkedQueue<Cliente>();
     private List<Cliente> listaClientesEnEspera = new List<Cliente>();
 
@@ -64,7 +63,7 @@ public class ClienteQueue : MonoBehaviour
     {
         if (DayManager.Instancia != null)
         {
-            return DayManager.Instancia.horaActual >= 8 && DayManager.Instancia.horaActual < 24;
+            return DayManager.Instancia.EstaAbierto;
         }
         return true;
     }
@@ -76,7 +75,6 @@ public class ClienteQueue : MonoBehaviour
         Cliente prefabAleatorio = listaPrefabsClientes[Random.Range(0, listaPrefabsClientes.Count)];
         if (prefabAleatorio == null) return;
 
-        // El índice exacto depende de cuántos clientes ya hay formados en la lista directa
         int indexEnFila = listaClientesEnEspera.Count;
 
         Vector3 direccionFila = -spawnPoint.forward;
@@ -95,7 +93,6 @@ public class ClienteQueue : MonoBehaviour
         dayObserver.Suscribir(newClient);
         xpObserver.Suscribir(newClient);
 
-        // Añadimos a ambas estructuras
         clientQueue.Enqueue(newClient);
         listaClientesEnEspera.Add(newClient);
 
@@ -111,13 +108,11 @@ public class ClienteQueue : MonoBehaviour
 
     public void RemoverClienteDeCola(Cliente clienteAEliminar)
     {
-        // 1. Removemos de la lista directa de espera
         if (listaClientesEnEspera.Contains(clienteAEliminar))
         {
             listaClientesEnEspera.Remove(clienteAEliminar);
         }
 
-        // 2. Reconstruimos la cola lógica
         int n = clientQueue.Count;
         SimpleLinkedQueue<Cliente> colaTemporal = new SimpleLinkedQueue<Cliente>();
 
@@ -131,7 +126,6 @@ public class ClienteQueue : MonoBehaviour
         }
         clientQueue = colaTemporal;
 
-        // 3. Reorganizamos a todos los que quedan para que den un paso al frente
         ActualizarTodasLasPosiciones();
     }
 
@@ -150,7 +144,6 @@ public class ClienteQueue : MonoBehaviour
         direccionFila.y = 0f;
         direccionFila.Normalize();
 
-        // Recorremos la lista directa de espera y actualizamos la posición física de cada uno
         for (int i = 0; i < listaClientesEnEspera.Count; i++)
         {
             Cliente cliente = listaClientesEnEspera[i];

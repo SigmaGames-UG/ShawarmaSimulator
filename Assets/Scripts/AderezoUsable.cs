@@ -23,7 +23,7 @@ public class AderezoUsable : MonoBehaviour
 
         usosActuales--;
 
-        // Creamos el chorrito
+        
         if (prefabChorro != null && puntoSalidaChorro != null)
         {
             GameObject chorro = Instantiate(

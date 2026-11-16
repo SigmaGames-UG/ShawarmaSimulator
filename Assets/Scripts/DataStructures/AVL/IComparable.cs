@@ -19,7 +19,7 @@ public class BST<T> where T : IComparable<T>
         else if (comparison > 0)
             node.Right = InsertRec(node.Right, value);
         else
-            return node; // No permite duplicados exactos
+            return node; 
 
         return node;
     }

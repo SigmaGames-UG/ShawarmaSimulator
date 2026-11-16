@@ -22,14 +22,11 @@ public class TrompoInteractivo : MonoBehaviour
         {
             usosActuales--;
 
-            // 1. Instanciamos el objeto físico de la carne
             GameObject nuevaCarne = Instantiate(prefabCarne);
 
-            // 2. Lo teletransportamos directo a la mano usando tu sistema
             inventario.AgregarHerramienta(nombreCarne, iconoCarne, nuevaCarne);
 
-            // Opcional para el futuro: achicar el trompo
-            // visualmente para que parezca que se va consumiendo.
+            
         }
     }
 }

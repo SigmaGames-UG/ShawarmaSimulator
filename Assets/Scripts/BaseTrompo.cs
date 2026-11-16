@@ -18,7 +18,6 @@ public class BaseTrompo : MonoBehaviour
 
     void Start()
     {
-        // Al empezar el juego, nos aseguramos de que arranque vacío
         LimpiarTrompo();
     }
 
@@ -38,7 +37,7 @@ public class BaseTrompo : MonoBehaviour
             GameObject nuevaCarne = Instantiate(prefabCarne);
             inventario.AgregarHerramienta(nombreCarne, iconoCarne, nuevaCarne);
 
-            ActualizarVisuales(); // Revisamos si hay que cambiar el asset al cortar
+            ActualizarVisuales(); 
         }
     }
 
@@ -49,24 +48,21 @@ public class BaseTrompo : MonoBehaviour
         ActualizarVisuales();
     }
 
-    // Esta es la magia que cambia los modelos
     private void ActualizarVisuales()
     {
-        // 1. Apagamos todos por precaución para que no se superpongan
         if (visualVacia != null) visualVacia.SetActive(false);
         if (visualMedio != null) visualMedio.SetActive(false);
         if (visualLlena != null) visualLlena.SetActive(false);
 
-        // 2. Encendemos el que corresponde según la cantidad de carne
         if (!tieneTrompo || usosActuales == 0)
         {
             if (visualVacia != null) visualVacia.SetActive(true);
         }
-        else if (usosActuales >= 4) // De 4 a 7 usos (Trompo Lleno)
+        else if (usosActuales >= 4) 
         {
             if (visualLlena != null) visualLlena.SetActive(true);
         }
-        else if (usosActuales > 0 && usosActuales < 4) // De 1 a 3 usos (Trompo Medio)
+        else if (usosActuales > 0 && usosActuales < 4) 
         {
             if (visualMedio != null) visualMedio.SetActive(true);
         }
