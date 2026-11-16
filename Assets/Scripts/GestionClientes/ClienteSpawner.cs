@@ -12,7 +12,11 @@ public class ClienteSpawner : MonoBehaviour
     public float tiempoEsperaNoComprador = 5f; // Tiempo que se queda si decide no comprar
     [Range(0f, 1f)] public float probabilidadCompra = 0.7f; // 70% de probabilidad de que quiera comprar
 
-    private GameObject clienteActualEnSpawn = null;
+    DayObserver dayObserver = new DayObserver();
+    HandObserver handObserver = new HandObserver();
+    XPObserver xpObserver = new XPObserver();
+
+    private Cliente clienteActualEnSpawn = null;
     private float temporizadorSpawn = 0f;
 
     void Update()
@@ -33,17 +37,20 @@ public class ClienteSpawner : MonoBehaviour
     {
         if (prefabCliente == null || puntoSpawn == null) return;
 
-        // Instanciamos al cliente en el punto de spawn
-        clienteActualEnSpawn = Instantiate(prefabCliente, puntoSpawn.position, puntoSpawn.rotation);
 
-        // Determinamos de forma aleatoria si decide comprar o no según la probabilidad
+        
+        Cliente nuevo = clienteActualEnSpawn.Clonar(puntoSpawn.position, puntoSpawn.rotation);
+
+        handObserver.Suscribir(nuevo);
+        dayObserver.Suscribir(nuevo);
+        xpObserver.Suscribir(nuevo);
+
         bool quiereComprar = UnityEngine.Random.value <= probabilidadCompra;
 
-        // Configuramos su comportamiento inteligente (le pasamos los datos al script del cliente)
-        Cliente InteligenciaCliente = clienteActualEnSpawn.GetComponent<Cliente>();
-        if (InteligenciaCliente != null)
+        
+        if (nuevo != null)
         {
-            InteligenciaCliente.InicializarComportamiento(quiereComprar, tiempoEsperaComprador, tiempoEsperaNoComprador, OnClienteSeFue);
+            nuevo.InicializarComportamiento(quiereComprar, tiempoEsperaComprador, tiempoEsperaNoComprador, OnClienteSeFue);
         }
 
         Debug.Log(quiereComprar ? "Cliente llegó con intención de comprar." : "Cliente llegó solo de paso (no comprará).");

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ToolManager : MonoBehaviour
 {
     public TextMeshProUGUI textoEnPantalla;
-    public Image imagenEnPantalla;
+    //public Image imagenEnPantalla;
     public Transform posicionMano;
 
     private ISimpleList<string> tools;
@@ -18,6 +18,8 @@ public class ToolManager : MonoBehaviour
 
     void Start()
     {
+        if (textoEnPantalla == null /*|| imagenEnPantalla == null*/)
+            Debug.LogError("ToolManager: UI references are not assigned.", this);
         tools = new SimpleArrayList<string>(1);
         toolSprites = new SimpleArrayList<Sprite>(1);
         toolModels = new SimpleArrayList<GameObject>(1);
@@ -200,12 +202,12 @@ public class ToolManager : MonoBehaviour
         if (tools.Count == 0)
         {
             textoEnPantalla.text = "Manos vacías";
-            imagenEnPantalla.enabled = false;
+            //imagenEnPantalla.enabled = false;
             return;
         }
 
-        imagenEnPantalla.enabled = true;
+        //imagenEnPantalla.enabled = true;
         textoEnPantalla.text = "En la mano: " + tools.Get(0);
-        imagenEnPantalla.sprite = toolSprites.Get(0);
+        //imagenEnPantalla.sprite = toolSprites.Get(0);
     }
 }

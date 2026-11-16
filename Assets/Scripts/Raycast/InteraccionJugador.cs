@@ -285,7 +285,7 @@ public class InteraccionJugador : MonoBehaviour
                         if (inventario != null && inventario.ObtenerNombreActual() == "Shawarma")
                         {
                             // Atendemos al cliente correctamente sumando dinero y XP
-                            cliente.AtenderClienteExitoso();
+                            cliente.ValidarYAtenderShawarma(ManagerExperiencia.ingredientesShawarmaEnMano);
                             inventario.ConsumirHerramientaActual();
                         }
                         else

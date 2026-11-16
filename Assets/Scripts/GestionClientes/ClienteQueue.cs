@@ -12,6 +12,10 @@ public class ClienteQueue : MonoBehaviour
 
     [SerializeField] private Transform spawnPoint;
 
+    DayObserver dayObserver = new DayObserver();
+    HandObserver handObserver = new HandObserver();
+    XPObserver xpObserver = new XPObserver();
+
     [Header("Configuración de Rotación del Modelo")]
     [SerializeField] private Vector3 rotacionExtraOffset = new Vector3(0f, 0f, 90f);
 
@@ -87,6 +91,9 @@ public class ClienteQueue : MonoBehaviour
         IPrototipo<Cliente> prototipo = prefabAleatorio;
 
         Cliente newClient = prototipo.Clonar(posicionEnFila, rotacionFinal);
+        handObserver.Suscribir(newClient);
+        dayObserver.Suscribir(newClient);
+        xpObserver.Suscribir(newClient);
 
         // Añadimos a ambas estructuras
         clientQueue.Enqueue(newClient);

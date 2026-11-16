@@ -4,11 +4,18 @@ using System.Collections.Generic;
 
 public class Cliente : MonoBehaviour, IPrototipo<Cliente>
 {
+    public event System.Action<Cliente> EntregaExitosa;
+    public event System.Action<Cliente> EntregaFallida;
+    public event System.Action<Cliente> ClienteSeFue;
+
     public enum Estado { EsperandoAtencion, EsperandoComida, Satisfecho, Enojado }
     public Estado estadoActual = Estado.EsperandoAtencion;
 
     public System.Collections.Generic.Queue<string> pedido = new System.Collections.Generic.Queue<string>();
     public TextMeshProUGUI textoPedido;
+    public ClienteQueue miColaCliente;
+
+    public int CantidadIngredientes => pedido.Count;
 
     private bool quiereComprar = true;
     private float tiempoRestante = 0f;
@@ -23,20 +30,9 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         return clon;
     }
 
-    public ClienteQueue miColaCliente;
-
-    void Start()
-    {
-        if (tiempoRestante <= 0f && quiereComprar)
-        {
-            GenerarPedidoNormal();
-        }
-    }
-
     public void InicializarComportamiento(bool compra, float tiempoCompra, float tiempoNoCompra, System.Action alSalir)
     {
         quiereComprar = compra;
-        callbackSalida = alSalir;
         atendidoOFrustrado = false;
         estadoActual = Estado.EsperandoAtencion;
 
@@ -48,7 +44,7 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         else
         {
             tiempoRestante = tiempoNoCompra;
-            DesactivarPedidoVisual();
+            if (textoPedido != null) textoPedido.text = "Solo mirando...";
         }
     }
 
@@ -57,26 +53,14 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         if (atendidoOFrustrado) return;
 
         tiempoRestante -= Time.deltaTime;
+        if (tiempoRestante > 0f) return;
 
-        if (tiempoRestante <= 0f)
-        {
-            atendidoOFrustrado = true;
+        atendidoOFrustrado = true;
 
-            if (quiereComprar)
-            {
-                Debug.Log("¡Cliente cansado de esperar! Se fue sin ser atendido. Pierdes XP.");
-                if (ManagerExperiencia.Instancia != null)
-                {
-                    ManagerExperiencia.Instancia.ModificarXP(-15);
-                }
-            }
-            else
-            {
-                Debug.Log("El transeúnte se retiró en paz.");
-            }
+        if (quiereComprar)
+            ClienteSeFue?.Invoke(this);
 
-            DestruirCliente();
-        }
+        Salir(atendido: false);
     }
 
     private void GenerarPedidoNormal()
@@ -146,151 +130,38 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         return resultado;
     }
 
-    // NUEVO: Valida si los ingredientes del shawarma entregado coinciden con el pedido
+    
     public void ValidarYAtenderShawarma(List<string> ingredientesShawarmaEntregado)
     {
         if (atendidoOFrustrado) return;
         atendidoOFrustrado = true;
 
-        // Convertimos la Queue del pedido a una lista para comparar fácilmente
-        List<string> listaPedidoCliente = new List<string>(pedido);
-
-        // Verificamos si tienen la misma cantidad y los mismos ingredientes
-        bool esCorrecto = true;
-
-        if (ingredientesShawarmaEntregado == null || ingredientesShawarmaEntregado.Count != listaPedidoCliente.Count)
-        {
-            esCorrecto = false;
-        }
+        if (EsPedidoCorrecto(ingredientesShawarmaEntregado))
+            EntregaExitosa?.Invoke(this);
         else
-        {
-            // Creamos copias temporales para comparar elementos
-            List<string> copiaCliente = new List<string>(listaPedidoCliente);
-            foreach (string ingrediente in ingredientesShawarmaEntregado)
-            {
-                if (copiaCliente.Contains(ingrediente))
-                {
-                    copiaCliente.Remove(ingrediente);
-                }
-                else
-                {
-                    esCorrecto = false;
-                    break;
-                }
-            }
-        }
+            EntregaFallida?.Invoke(this);
 
-        // Aplicamos recompensas o penalizaciones según el resultado
-        if (esCorrecto)
-        {
-            int cantidadIngredientes = listaPedidoCliente.Count;
-            if (ManagerExperiencia.Instancia != null)
-            {
-                ManagerExperiencia.Instancia.RegistrarVentaShawarma(cantidadIngredientes);
-            }
-            Debug.Log("¡Pedido correcto entregado con éxito!");
-        }
-        else
-        {
-            if (ManagerExperiencia.Instancia != null)
-            {
-                ManagerExperiencia.Instancia.RegistrarPedidoIncorrecto(10); // Resta 10 XP y no da dinero
-            }
-            Debug.Log("¡Pedido incorrecto! El cliente se va molesto.");
-        }
-
-        if (DayManager.Instancia != null)
-        {
-            DayManager.Instancia.RegistrarClienteAtendido();
-        }
-
-        // Retiramos al cliente de la cola y lo destruimos
-        if (miColaCliente != null)
-        {
-            miColaCliente.DestroyClientAtendido(this);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        Salir(atendido: true);
     }
-
-    // Método anterior adaptado por compatibilidad por si se llama directo
-    public void AtenderClienteExitoso()
+    
+    private bool EsPedidoCorrecto(List<string> entregados)
     {
-        if (atendidoOFrustrado) return;
-        atendidoOFrustrado = true;
+        if (entregados == null || entregados.Count != pedido.Count) return false;
 
-        List<string> listaPedidoCliente = new List<string>(pedido);
-        List<string> ingredientesEntregados = ManagerExperiencia.ingredientesShawarmaEnMano;
-
-        bool esCorrecto = true;
-
-        // 1. Validamos que tengan la misma cantidad exacta de ingredientes
-        if (ingredientesEntregados == null || ingredientesEntregados.Count != listaPedidoCliente.Count)
+        List<string> copia = new List<string>(pedido);
+        foreach (string ingrediente in entregados)
         {
-            esCorrecto = false;
+            if (!copia.Remove(ingrediente)) return false;
         }
-        else
-        {
-            // 2. Validamos que contengan exactamente los mismos elementos (sin importar el orden)
-            List<string> copiaCliente = new List<string>(listaPedidoCliente);
-            foreach (string ingrediente in ingredientesEntregados)
-            {
-                if (copiaCliente.Contains(ingrediente))
-                {
-                    copiaCliente.Remove(ingrediente);
-                }
-                else
-                {
-                    esCorrecto = false;
-                    break;
-                }
-            }
-        }
-
-        // 3. Otorgamos recompensas o penalizaciones según el resultado estricto
-        if (esCorrecto)
-        {
-            int cantidadIngredientes = listaPedidoCliente.Count;
-            if (ManagerExperiencia.Instancia != null)
-            {
-                ManagerExperiencia.Instancia.RegistrarVentaShawarma(cantidadIngredientes);
-            }
-            Debug.Log("¡Pedido 100% correcto entregado con éxito!");
-        }
-        else
-        {
-            if (ManagerExperiencia.Instancia != null)
-            {
-                ManagerExperiencia.Instancia.RegistrarPedidoIncorrecto(10); // Resta 10 XP y 0 dinero
-            }
-            Debug.Log("¡Pedido incorrecto o incompleto! Se penaliza al jugador.");
-        }
-
-        if (DayManager.Instancia != null)
-        {
-            DayManager.Instancia.RegistrarClienteAtendido();
-        }
-
-        // Limpiamos la mano
-        ManagerExperiencia.ingredientesShawarmaEnMano.Clear();
-
-        if (miColaCliente != null)
-        {
-            miColaCliente.DestroyClientAtendido(this);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        return true;
     }
 
-    void DestruirCliente()
+    private void Salir(bool atendido)
     {
         if (miColaCliente != null)
         {
-            miColaCliente.RemoverClienteDeCola(this);
+            if (atendido) miColaCliente.DestroyClientAtendido(this);
+            else miColaCliente.RemoverClienteDeCola(this);
         }
         Destroy(gameObject);
     }
