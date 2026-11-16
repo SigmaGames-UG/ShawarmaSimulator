@@ -270,7 +270,6 @@ public class TiendaManager : MonoBehaviour
 
 
 
-    // --- MÉTODOS DE COMPRA CON PRECIOS Y VALIDACIÓN ---
 
     public void AñadirKetchup()
 
@@ -468,7 +467,6 @@ public class TiendaManager : MonoBehaviour
 
 
 
-        // Sumar el costo total de los productos en el carrito
 
         int costoTotal = 0;
 
@@ -482,7 +480,6 @@ public class TiendaManager : MonoBehaviour
 
 
 
-        // Intentar descontar el dinero mediante el ManagerExperiencia
 
         if (ManagerExperiencia.Instancia != null && ManagerExperiencia.Instancia.GastarDinero(costoTotal))
 

@@ -85,27 +85,73 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
 
         if (ManagerExperiencia.Instancia != null && ManagerExperiencia.Instancia.ingredientesDesbloqueados != null)
         {
-            string[] ingredientesDisponibles = ManagerExperiencia.Instancia.ingredientesDesbloqueados.ToArray();
+            List<string> desbloqueados = ManagerExperiencia.Instancia.ingredientesDesbloqueados;
 
-            if (ingredientesDisponibles.Length > 0)
+            List<string> basesDisponibles = new List<string>();
+            List<string> aderezosDisponibles = new List<string>();
+
+            foreach (string ing in desbloqueados)
             {
-                int cantidadExtras = Random.Range(0, 3);
-                int totalDeseado = 1 + cantidadExtras;
-
-                if (totalDeseado > ingredientesDisponibles.Length)
-                    totalDeseado = ingredientesDisponibles.Length;
-
-                while (pedido.Count < totalDeseado)
+                if (ing == "Carne" || ing == "Trompo" || ing == "Lechuga" || ing == "Porcion Lechuga")
                 {
-                    string ingredienteAleatorio = ingredientesDisponibles[Random.Range(0, ingredientesDisponibles.Length)];
-                    pedido.Enqueue(ingredienteAleatorio);
+                    string nombreLimpio = (ing == "Trompo") ? "Carne" : (ing == "Porcion Lechuga") ? "Lechuga" : ing;
+                    if (!basesDisponibles.Contains(nombreLimpio))
+                        basesDisponibles.Add(nombreLimpio);
                 }
+                else
+                {
+                    if (!aderezosDisponibles.Contains(ing))
+                        aderezosDisponibles.Add(ing);
+                }
+            }
+
+            if (basesDisponibles.Count == 0) return;
+
+            int cantidadBasesAElegir = (basesDisponibles.Count > 1 && Random.value > 0.4f) ? 2 : 1;
+
+            List<string> basesMezcladas = new List<string>(basesDisponibles);
+            for (int i = 0; i < basesMezcladas.Count; i++)
+            {
+                string temp = basesMezcladas[i];
+                int randomIndex = Random.Range(i, basesMezcladas.Count);
+                basesMezcladas[i] = basesMezcladas[randomIndex];
+                basesMezcladas[randomIndex] = temp;
+            }
+
+            List<string> ingredientesElegidos = new List<string>();
+            for (int i = 0; i < cantidadBasesAElegir; i++)
+            {
+                ingredientesElegidos.Add(basesMezcladas[i]);
+            }
+
+            
+            if (aderezosDisponibles.Count > 0 && Random.value > 0.5f) 
+            {
+                int cantidadAderezos = Random.Range(1, Mathf.Min(2, aderezosDisponibles.Count + 1));
+
+                List<string> aderezosMezclados = new List<string>(aderezosDisponibles);
+                for (int i = 0; i < aderezosMezclados.Count; i++)
+                {
+                    string temp = aderezosMezclados[i];
+                    int randomIndex = Random.Range(i, aderezosMezclados.Count);
+                    aderezosMezclados[i] = aderezosMezclados[randomIndex];
+                    aderezosMezclados[randomIndex] = temp;
+                }
+
+                for (int i = 0; i < cantidadAderezos; i++)
+                {
+                    ingredientesElegidos.Add(aderezosMezclados[i]);
+                }
+            }
+
+            foreach (string item in ingredientesElegidos)
+            {
+                pedido.Enqueue(item);
             }
         }
 
         ActualizarTextoPedido();
     }
-
     private void DesactivarPedidoVisual()
     {
         if (textoPedido != null)
@@ -146,16 +192,13 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         return resultado;
     }
 
-    // NUEVO: Valida si los ingredientes del shawarma entregado coinciden con el pedido
     public void ValidarYAtenderShawarma(List<string> ingredientesShawarmaEntregado)
     {
         if (atendidoOFrustrado) return;
         atendidoOFrustrado = true;
 
-        // Convertimos la Queue del pedido a una lista para comparar fácilmente
         List<string> listaPedidoCliente = new List<string>(pedido);
 
-        // Verificamos si tienen la misma cantidad y los mismos ingredientes
         bool esCorrecto = true;
 
         if (ingredientesShawarmaEntregado == null || ingredientesShawarmaEntregado.Count != listaPedidoCliente.Count)
@@ -164,7 +207,6 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         }
         else
         {
-            // Creamos copias temporales para comparar elementos
             List<string> copiaCliente = new List<string>(listaPedidoCliente);
             foreach (string ingrediente in ingredientesShawarmaEntregado)
             {
@@ -180,7 +222,6 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
             }
         }
 
-        // Aplicamos recompensas o penalizaciones según el resultado
         if (esCorrecto)
         {
             int cantidadIngredientes = listaPedidoCliente.Count;
@@ -194,7 +235,7 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         {
             if (ManagerExperiencia.Instancia != null)
             {
-                ManagerExperiencia.Instancia.RegistrarPedidoIncorrecto(10); // Resta 10 XP y no da dinero
+                ManagerExperiencia.Instancia.RegistrarPedidoIncorrecto(10); 
             }
             Debug.Log("¡Pedido incorrecto! El cliente se va molesto.");
         }
@@ -204,7 +245,6 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
             DayManager.Instancia.RegistrarClienteAtendido();
         }
 
-        // Retiramos al cliente de la cola y lo destruimos
         if (miColaCliente != null)
         {
             miColaCliente.DestroyClientAtendido(this);
@@ -215,7 +255,6 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         }
     }
 
-    // Método anterior adaptado por compatibilidad por si se llama directo
     public void AtenderClienteExitoso()
     {
         if (atendidoOFrustrado) return;
@@ -226,14 +265,12 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
 
         bool esCorrecto = true;
 
-        // 1. Validamos que tengan la misma cantidad exacta de ingredientes
         if (ingredientesEntregados == null || ingredientesEntregados.Count != listaPedidoCliente.Count)
         {
             esCorrecto = false;
         }
         else
         {
-            // 2. Validamos que contengan exactamente los mismos elementos (sin importar el orden)
             List<string> copiaCliente = new List<string>(listaPedidoCliente);
             foreach (string ingrediente in ingredientesEntregados)
             {
@@ -249,7 +286,6 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
             }
         }
 
-        // 3. Otorgamos recompensas o penalizaciones según el resultado estricto
         if (esCorrecto)
         {
             int cantidadIngredientes = listaPedidoCliente.Count;
@@ -263,7 +299,7 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         {
             if (ManagerExperiencia.Instancia != null)
             {
-                ManagerExperiencia.Instancia.RegistrarPedidoIncorrecto(10); // Resta 10 XP y 0 dinero
+                ManagerExperiencia.Instancia.RegistrarPedidoIncorrecto(10); 
             }
             Debug.Log("¡Pedido incorrecto o incompleto! Se penaliza al jugador.");
         }
@@ -273,7 +309,6 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
             DayManager.Instancia.RegistrarClienteAtendido();
         }
 
-        // Limpiamos la mano
         ManagerExperiencia.ingredientesShawarmaEnMano.Clear();
 
         if (miColaCliente != null)

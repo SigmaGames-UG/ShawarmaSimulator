@@ -40,7 +40,6 @@ public class ToolManager : MonoBehaviour
         AderezoUsable aderezo =
             objetoActual.GetComponentInChildren<AderezoUsable>();
 
-        // Si es un aderezo
         if (aderezo != null)
         {
             bool pudoUsarse = aderezo.Usar();
@@ -48,15 +47,13 @@ public class ToolManager : MonoBehaviour
             if (!pudoUsarse)
                 return;
 
-            // Si gastamos el último uso,
-            // destruimos la botella
+            
             if (aderezo.EstaVacio())
             {
                 ConsumirHerramientaActual();
             }
         }
 
-        // Si NO es un aderezo (carne, lechuga, etc.)
         else
         {
             ConsumirHerramientaActual();
@@ -82,12 +79,9 @@ public class ToolManager : MonoBehaviour
         toolSprites.Add(icono);
         toolModels.Add(objetoFisico);
 
-        // Guardamos cómo era originalmente
         rotacionOriginal = objetoFisico.transform.rotation;
         escalaOriginal = objetoFisico.transform.localScale;
 
-        // Lo colocamos en la mano
-        // 1. Usamos TRUE para que el objeto no se vuelva gigante o enano al pegarse a la mano
         objetoFisico.transform.SetParent(posicionMano, true);
 
         ItemRecogible item = objetoFisico.GetComponent<ItemRecogible>();
@@ -102,16 +96,13 @@ public class ToolManager : MonoBehaviour
             objetoFisico.transform.localRotation = Quaternion.identity;
         }
 
-        // Ya no necesitamos forzar la escala porque SetParent(..., true) la protege
 
-        // 2. Apagamos TODOS los colliders de la pieza y sus hijos (esto ya lo hacías bien)
         Collider[] colliders = objetoFisico.GetComponentsInChildren<Collider>();
         foreach (Collider c in colliders)
         {
             c.enabled = false;
         }
 
-        // 3. ¡LA SOLUCIÓN AL BUG INCONTROLABLE! Apagamos TODOS los Rigidbodies
         Rigidbody[] rbs = objetoFisico.GetComponentsInChildren<Rigidbody>();
         foreach (Rigidbody r in rbs)
         {
@@ -133,24 +124,20 @@ public class ToolManager : MonoBehaviour
 
         GameObject objetoEnMano = toolModels.Get(0);
 
-        // 1. Lo desvinculamos de la mano con "true" para que no herede tamaños raros
         objetoEnMano.transform.SetParent(null, true);
 
         objetoEnMano.transform.rotation = rotacionOriginal;
         objetoEnMano.transform.localScale = escalaOriginal;
 
-        // 2. Volvemos a prender las colisiones y calculamos la altura
         Collider[] colliders = objetoEnMano.GetComponentsInChildren<Collider>();
-        float alturaParaSubir = 0.2f; // Lo declaramos UNA sola vez
+        float alturaParaSubir = 0.2f; 
 
         foreach (Collider c in colliders)
         {
             c.enabled = true;
-            // Usamos el tamaño del primer collider que encuentre para calcular la altura
             alturaParaSubir = c.bounds.extents.y;
         }
 
-        // 3. ¡VOLVEMOS A PRENDER LA FÍSICA Y LA GRAVEDAD PARA TODO EL OBJETO!
         Rigidbody[] rbs = objetoEnMano.GetComponentsInChildren<Rigidbody>();
         foreach (Rigidbody r in rbs)
         {
@@ -158,10 +145,8 @@ public class ToolManager : MonoBehaviour
             r.useGravity = true;
         }
 
-        // 4. Lo posicionamos usando la altura que ya calculamos arriba
         objetoEnMano.transform.position = posicionExactaMesa + new Vector3(0, alturaParaSubir + 0.1f, 0);
 
-        // 5. Vaciamos la mano
         tools.RemoveAt(0);
         toolSprites.RemoveAt(0);
         toolModels.RemoveAt(0);

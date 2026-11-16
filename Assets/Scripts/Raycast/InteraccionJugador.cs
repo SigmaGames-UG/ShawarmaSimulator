@@ -65,7 +65,6 @@ public class InteraccionJugador : MonoBehaviour
 
             UpdateHighlight(hit.collider.GetComponentInParent<AimGlow>());
 
-            // CASO A: MÁQUINA DEL TROMPO
             if (baseTrompo != null)
             {
                 if (!baseTrompo.tieneTrompo)
@@ -122,7 +121,6 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO B: BANDEJA DE LECHUGA
             else if (bandeja != null)
             {
                 if (bandeja.porcionesActuales == 0)
@@ -160,7 +158,6 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO C: RADIO
             else if (radio != null)
             {
                 if (!radio.EstaEncendida())
@@ -188,7 +185,6 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO D: ITEM RECOGIBLE
             else if (item != null)
             {
                 if (inventario.TieneHerramientas())
@@ -210,7 +206,6 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO E: PLATO DE ARMADO
             else if (plato != null)
             {
                 if (inventario.TieneHerramientas())
@@ -254,10 +249,8 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO F: CLIENTE INTELIGENTE
             else if (cliente != null)
             {
-                // FASE 1: Tomar la orden
                 if (cliente.estadoActual == Cliente.Estado.EsperandoAtencion)
                 {
                     MostrarIconoYTexto(
@@ -271,8 +264,7 @@ public class InteraccionJugador : MonoBehaviour
                     }
                 }
 
-                // FASE 2: Entregar el Shawarma preparado
-                // FASE 2: Entregar el Shawarma preparado
+                
                 else if (cliente.estadoActual == Cliente.Estado.EsperandoComida)
                 {
                     MostrarIconoYTexto(
@@ -284,7 +276,6 @@ public class InteraccionJugador : MonoBehaviour
                     {
                         if (inventario != null && inventario.ObtenerNombreActual() == "Shawarma")
                         {
-                            // Atendemos al cliente correctamente sumando dinero y XP
                             cliente.AtenderClienteExitoso();
                             inventario.ConsumirHerramientaActual();
                         }
@@ -295,7 +286,6 @@ public class InteraccionJugador : MonoBehaviour
                     }
                 }
 
-                // CASO G: SUPERFICIE (MESA / PISO)
                 else
             {
                 if (inventario.TieneHerramientas())
@@ -329,7 +319,6 @@ public class InteraccionJugador : MonoBehaviour
         }
     }
 
-    // FUNCIONES AUXILIARES DE INTERFAZ
     void MostrarIcono(Sprite icono)
     {
         if (iconoInteraccionEnPantalla != null)

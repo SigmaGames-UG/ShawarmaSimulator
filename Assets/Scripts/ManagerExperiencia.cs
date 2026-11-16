@@ -16,9 +16,8 @@ public class ManagerExperiencia : MonoBehaviour
     public TextMeshProUGUI textoDineroUI;
 
     [Header("Ingredientes Desbloqueados")]
-    public List<string> ingredientesDesbloqueados = new List<string>() { "Carne", "Lechuga", "Trompo" };
+    public List<string> ingredientesDesbloqueados = new List<string>() { "Carne", "Lechuga" };
 
-    // Variable estática para llevar el control del shawarma que el jugador lleva en la mano
     public static List<string> ingredientesShawarmaEnMano = new List<string>();
 
     void Awake()
@@ -53,8 +52,7 @@ public class ManagerExperiencia : MonoBehaviour
         if (!ingredientesDesbloqueados.Contains("Lechuga"))
             ingredientesDesbloqueados.Add("Lechuga");
 
-        if (!ingredientesDesbloqueados.Contains("Trompo"))
-            ingredientesDesbloqueados.Add("Trompo");
+        
     }
 
 
@@ -92,7 +90,6 @@ public class ManagerExperiencia : MonoBehaviour
         int xpGanada = pago;
         ModificarXP(xpGanada);
 
-        // Registramos ingreso y pedido correcto.
         if (DayManager.Instancia != null)
         {
             DayManager.Instancia.RegistrarVenta(pago);
@@ -161,4 +158,3 @@ public class ManagerExperiencia : MonoBehaviour
     }
 }
 
-// Cuando cierras el shawarma, guardamos los ingredientes actuales en la mano del jugador

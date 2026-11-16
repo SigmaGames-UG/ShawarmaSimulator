@@ -62,7 +62,7 @@ public class AVL<T> : BST<T> where T : IComparable<T>
 
         int balance = GetBalance(node);
 
-        //CASOS DE ROTACIÓN 
+        //CASOS DE ROTA
 
         if (balance > 1 && value.CompareTo(node.Left.Value) < 0)
             return RotateRight(node);
