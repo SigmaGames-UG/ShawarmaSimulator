@@ -199,13 +199,24 @@ public class ToolManager : MonoBehaviour
     {
         if (tools.Count == 0)
         {
-            textoEnPantalla.text = "Manos vacías";
-            imagenEnPantalla.enabled = false;
+            if (textoEnPantalla != null)
+                textoEnPantalla.text = "Manos vacías";
+
+            if (imagenEnPantalla != null)
+                imagenEnPantalla.enabled = false;
+
             return;
         }
 
-        imagenEnPantalla.enabled = true;
-        textoEnPantalla.text = "En la mano: " + tools.Get(0);
-        imagenEnPantalla.sprite = toolSprites.Get(0);
+        if (imagenEnPantalla != null)
+        {
+            imagenEnPantalla.enabled = true;
+            imagenEnPantalla.sprite = toolSprites.Get(0);
+        }
+
+        if (textoEnPantalla != null)
+        {
+            textoEnPantalla.text = "En la mano: " + tools.Get(0);
+        }
     }
 }

@@ -60,7 +60,8 @@ public class ClienteQueue : MonoBehaviour
     {
         if (DayManager.Instancia != null)
         {
-            return DayManager.Instancia.horaActual >= 8 && DayManager.Instancia.horaActual < 24;
+            // Ahora respeta estrictamente si el local está abierto por el DayManager (Tecla G / Medianoche)
+            return DayManager.Instancia.EstaAbierto;
         }
         return true;
     }

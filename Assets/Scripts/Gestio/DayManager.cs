@@ -21,7 +21,7 @@ public class DayManager : MonoBehaviour
     private bool esperandoCierre = false;
     private float acumuladorTiempo = 0f;
 
-    private const float segundosPorMinutoJuego = 1f;
+    private const float segundosPorMinutoJuego = 0.1f;
 
     public bool EstaAbierto => localAbierto;
 
@@ -39,7 +39,6 @@ public class DayManager : MonoBehaviour
     public int xpGanadaHoy = 0;
     public int xpPerdidaHoy = 0;
 
-    // Historial semanal ordenado por número de día.
     private AVL<DiaStats> historialDiasAVL =
         new AVL<DiaStats>();
 
@@ -75,14 +74,12 @@ public class DayManager : MonoBehaviour
 
         if (panelAbierto) return;
 
-        // Iniciar el día.
         if (!localAbierto && !esperandoCierre &&
             Input.GetKeyDown(KeyCode.G))
         {
             AbrirLocal();
         }
 
-        // Avanzar el reloj solamente con el local abierto.
         if (localAbierto)
         {
             acumuladorTiempo += Time.deltaTime;
@@ -110,7 +107,6 @@ public class DayManager : MonoBehaviour
             ActualizarInterfazReloj();
         }
 
-        // Guardar el día cuando llega la medianoche.
         if (esperandoCierre &&
             Input.GetKeyDown(KeyCode.G))
         {
@@ -148,7 +144,6 @@ public class DayManager : MonoBehaviour
         Debug.Log("El local cerró. Ya no se registran estadísticas.");
     }
 
-    // REGISTROS DURANTE EL DÍA
 
     public void RegistrarClienteAtendido()
     {
@@ -185,7 +180,6 @@ public class DayManager : MonoBehaviour
             xpPerdidaHoy -= cantidad;
     }
 
-    // CIERRE Y GUARDADO
 
     void TerminarDia()
     {
@@ -218,7 +212,6 @@ public class DayManager : MonoBehaviour
                 textoBalanceUI.text =
                     reporteDia + "\n\n" + reporteSemanal;
 
-            // Nueva semana: evitamos días duplicados.
             historialDiasAVL.Clear();
             diaActual = 1;
         }
@@ -367,11 +360,13 @@ public class DayManager : MonoBehaviour
 
     public void CerrarPanelEstadisticas()
     {
-        if (panelEstadisticas != null)
+        Time.timeScale = 1f;
+
+        if (panelEstadisticas != null) 
             panelEstadisticas.SetActive(false);
 
         panelAbierto = false;
-        Time.timeScale = 1f;
     }
+
 
 }
