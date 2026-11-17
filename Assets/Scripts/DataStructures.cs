@@ -1,6 +1,5 @@
 using UnityEngine;
 
-// 1. ISimpleStack.cs
 public interface ISimpleStack<T>
 {
     void Push(T item);
@@ -10,7 +9,6 @@ public interface ISimpleStack<T>
     int Count { get; }
 }
 
-// 2. SimpleArrayStack.cs
 public class SimpleArrayStack<T> : ISimpleStack<T>
 {
     private T[] array;
@@ -43,7 +41,6 @@ public class SimpleArrayStack<T> : ISimpleStack<T>
     }
 }
 
-// 3. SimpleLinkedStack.cs
 public class SimpleLinkedStack<T> : ISimpleStack<T>
 {
     private class Node

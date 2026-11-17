@@ -183,7 +183,6 @@ public class ClienteQueue : MonoBehaviour
         Cliente primero = clientQueue.Peek();
         if (primero == null) return;
 
-        // A newly promoted customer enters the graph at the spawn node.
         primero.MoveTo(ObtenerPosicionEnFila(0));
         if (pathfinding != null && pathfinding.Graph != null
             && primero.TryGetComponent(out ClientePathMovement movement)
@@ -206,7 +205,6 @@ public class ClienteQueue : MonoBehaviour
 
     public void ActualizarTodasLasPosiciones()
     {
-        // The first customer owns the counter and may already be walking or waiting there.
         for (int i = 1; i < listaClientesEnEspera.Count; i++)
         {
             Cliente cliente = listaClientesEnEspera[i];

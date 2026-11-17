@@ -46,7 +46,6 @@ public class AimGlow : MonoBehaviour
 
             if (enabled)
             {
-                // Add the outline material as an extra material
                 if (outlineMaterial != null)
                 {
                     var original = originalMaterials[i];

@@ -53,7 +53,7 @@ public class DayManager : MonoBehaviour
     void Start()
     {
         if (textoRelojUnico != null)
-            textoRelojUnico.text = "El día aún no comienza";
+            textoRelojUnico.text = "Presiona G para emepzar el dia";
 
         if (textoBalanceUI != null)
             textoBalanceUI.text = "";

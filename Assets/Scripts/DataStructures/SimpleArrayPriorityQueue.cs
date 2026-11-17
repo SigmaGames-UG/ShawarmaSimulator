@@ -3,9 +3,7 @@ using System;
 public class SimpleArrayPriorityQueue<T> : ISimplePriorityQueue<T>
 {
     private T[] items;
-    // Items guarda los objetos de la tienda
     private int[] priorities;
-    // priorities guarda las prioridades
     private int count;
 
     private const int defaultCapacity = 10;
@@ -25,7 +23,6 @@ public class SimpleArrayPriorityQueue<T> : ISimplePriorityQueue<T>
         count = 0;
     }
 
-    // Enqueue  mete los objetos de la tienda ordenados
     public void Enqueue(T item, int priority)
     {
         ValidateSize();
@@ -47,7 +44,6 @@ public class SimpleArrayPriorityQueue<T> : ISimplePriorityQueue<T>
 
         count++;
     }
-    // Dequeue saca el primero y mueve el resto a la izquierda
     public T Dequeue()
     {
         ValidateNotEmpty();
@@ -64,7 +60,6 @@ public class SimpleArrayPriorityQueue<T> : ISimplePriorityQueue<T>
         return firstItem;
     }
 
-    // Peek revisa/consulta el primero
     public T Peek()
     {
         ValidateNotEmpty();

@@ -42,7 +42,6 @@ public class TiendaManager : MonoBehaviour
         for (int i = 0; i < botonesIngredientes.Length; i++)
             posicionesIngredientes[i] = ((RectTransform)botonesIngredientes[i].transform).anchoredPosition;
 
-        // The shop uses fixed row positions instead of a layout group.
         CollectionSort.SortArray(posicionesIngredientes, (left, right) => right.y.CompareTo(left.y));
         managerExperiencia = ManagerExperiencia.Instancia;
         if (managerExperiencia != null)

@@ -24,7 +24,6 @@ public class PlayerDeath : MonoBehaviour
 
     private bool derribado = false;
 
-    // Guardamos cuándo fue la última vez que tocó una superficie desde arriba
     private float ultimoContactoSuelo = -100f;
 
     private void Awake()
@@ -60,29 +59,24 @@ public class PlayerDeath : MonoBehaviour
 
         derribado = true;
 
-        // Reiniciamos el estado de suelo
         ultimoContactoSuelo = -100f;
 
-        // Apagamos movimiento normal
         if (movimiento != null)
         {
             movimiento.enabled = false;
         }
 
-        // Apagamos CharacterController
         if (characterController != null)
         {
             characterController.enabled = false;
         }
 
-        // Activamos collider físico
         if (colliderFisico != null)
         {
             colliderFisico.enabled = true;
             colliderFisico.isTrigger = false;
         }
 
-        // Activamos Rigidbody
         if (rb != null)
         {
             rb.isKinematic = false;
@@ -93,14 +87,12 @@ public class PlayerDeath : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
 
-            // Golpe instantáneo
             Vector3 velocidadGolpe =
                 direccionGolpe.normalized * fuerzaGolpe
                 + Vector3.up * fuerzaVertical;
 
             rb.linearVelocity = velocidadGolpe;
 
-            // Giro cómico
             rb.AddTorque(
                 Random.insideUnitSphere * fuerzaGiro,
                 ForceMode.VelocityChange
@@ -115,7 +107,6 @@ public class PlayerDeath : MonoBehaviour
         if (!derribado || rb == null)
             return;
 
-        // Cuando empieza a caer, agregamos gravedad extra
         if (rb.linearVelocity.y <= 0f)
         {
             rb.AddForce(
@@ -124,7 +115,6 @@ public class PlayerDeath : MonoBehaviour
             );
         }
 
-        // Limitamos la velocidad máxima hacia abajo
         Vector3 velocidad = rb.linearVelocity;
 
         if (velocidad.y < -velocidadMaximaCaida)
@@ -139,13 +129,11 @@ public class PlayerDeath : MonoBehaviour
         if (!derribado)
             return;
 
-        // Revisamos los puntos de contacto
         for (int i = 0; i < collision.contactCount; i++)
         {
             ContactPoint contacto = collision.GetContact(i);
 
-            // Si la normal apunta hacia arriba,
-            // significa que tenemos piso debajo
+            
             if (contacto.normal.y > 0.4f)
             {
                 ultimoContactoSuelo = Time.time;
@@ -156,23 +144,19 @@ public class PlayerDeath : MonoBehaviour
 
     private bool EstaEnElSuelo()
     {
-        // Consideramos que está en el suelo si hubo
-        // contacto con piso hace muy poquito
+        
         return Time.time - ultimoContactoSuelo < 0.15f;
     }
 
     private IEnumerator Recuperarse()
     {
-        // Primero dejamos que ocurra el atropello
         yield return new WaitForSeconds(tiempoMinimoDerribado);
 
-        // PRIMERO esperamos a que realmente toque el piso
         while (!EstaEnElSuelo())
         {
             yield return null;
         }
 
-        // DESPUÉS esperamos a que deje de deslizarse/rebotar
         while (rb != null &&
                rb.linearVelocity.magnitude > velocidadParaLevantarse)
         {
@@ -188,7 +172,6 @@ public class PlayerDeath : MonoBehaviour
             rb.useGravity = false;
         }
 
-        // Nos enderezamos donde realmente caímos
         Quaternion rotacionInicial = transform.rotation;
 
         float rotacionYActual = transform.eulerAngles.y;
@@ -221,19 +204,16 @@ public class PlayerDeath : MonoBehaviour
 
         transform.rotation = rotacionFinal;
 
-        // Apagamos collider de física
         if (colliderFisico != null)
         {
             colliderFisico.enabled = false;
         }
 
-        // Reactivamos CharacterController
         if (characterController != null)
         {
             characterController.enabled = true;
         }
 
-        // Reactivamos movimiento
         if (movimiento != null)
         {
             movimiento.enabled = true;
