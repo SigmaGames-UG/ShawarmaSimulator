@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 32c9856e05b0c59409c5b3e843f296c3, type: 3}
       propertyPath: m_LocalScale.x
-      value: 4.285315
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32c9856e05b0c59409c5b3e843f296c3, type: 3}
       propertyPath: m_LocalScale.y
@@ -81,6 +81,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 32c9856e05b0c59409c5b3e843f296c3, type: 3}
       insertIndex: -1
       addedObject: {fileID: -6470118292442435111}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 32c9856e05b0c59409c5b3e843f296c3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6292629428251053638}
   m_SourcePrefab: {fileID: 100100000, guid: 32c9856e05b0c59409c5b3e843f296c3, type: 3}
 --- !u!1 &5624663142958117422 stripped
 GameObject:
@@ -140,3 +143,20 @@ MonoBehaviour:
   useEmission: 0
   glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   glowIntensity: 2
+--- !u!114 &-6292629428251053638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5624663142958117422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 795f48b5d66854547bee02b662548f4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AderezoUsable
+  usosTotales: 6
+  usosActuales: 0
+  prefabChorro: {fileID: 1630805523135293297, guid: 575ad791496c93c479648e3404944f85, type: 3}
+  puntoSalidaChorro: {fileID: 0}
+  duracionChorro: 0.3

@@ -1831,12 +1831,6 @@ MonoBehaviour:
   - id: AutoVerde
     prefab: {fileID: 1106941106}
     velocidad: 900
-  - id: AutoRojo
-    prefab: {fileID: 0}
-    velocidad: 900
-  - id: AutoGris
-    prefab: {fileID: 0}
-    velocidad: 900
   puntoSpawn: {fileID: 320817279}
   puntoFinal: {fileID: 1999411270}
   tiempoEntreAutos: 5
@@ -3098,12 +3092,6 @@ MonoBehaviour:
   autos:
   - id: AutoVerde
     prefab: {fileID: 1106941106}
-    velocidad: 900
-  - id: AutoRojo
-    prefab: {fileID: 0}
-    velocidad: 900
-  - id: AutoGris
-    prefab: {fileID: 0}
     velocidad: 900
   puntoSpawn: {fileID: 952476839}
   puntoFinal: {fileID: 1234035081}
@@ -5194,13 +5182,13 @@ MonoBehaviour:
   botonOrdenNombre: {fileID: 1900600104}
   opcionesFiltro: {fileID: 1900600105}
   scriptCamara: {fileID: 2029399720}
-  prefabKetchup: {fileID: 0}
+  prefabKetchup: {fileID: 1450172422113695309, guid: 0e1e58bf909504e44907ad011ee9fdf7, type: 3}
   precioKetchup: 15
   prefabtrompo: {fileID: 6600226557599697546, guid: 07abecb12e5b13f4587920995ed9a012, type: 3}
   precioCarne: 15
-  prefabMayo: {fileID: 0}
+  prefabMayo: {fileID: 5624663142958117422, guid: fa1ab707c37607744b4923d27120e6a9, type: 3}
   precioMayo: 20
-  prefabTarator: {fileID: 0}
+  prefabTarator: {fileID: 1092401064469265303, guid: 6acc4e4abf287dc409dd799f9c42715d, type: 3}
   precioTarator: 25
   prefablechuga: {fileID: 1807553100619674947, guid: f586fe1b94fc03b43bdfc3654dcbd084, type: 3}
   precioLechuga: 10
