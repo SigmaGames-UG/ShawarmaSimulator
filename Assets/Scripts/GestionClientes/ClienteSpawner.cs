@@ -3,14 +3,14 @@ using UnityEngine;
 public class ClienteSpawner : MonoBehaviour
 {
     [Header("Configuración de Spawn")]
-    public GameObject prefabCliente; // El prefab de tu cliente
-    public Transform puntoSpawn;     // Donde aparece el cliente
-    public float intervaloSpawn = 40f; // Cada cuánto intenta spawnear (40 segundos)
+    public GameObject prefabCliente; 
+    public Transform puntoSpawn;     
+    public float intervaloSpawn = 40f; 
 
     [Header("Tiempos de Comportamiento")]
-    public float tiempoEsperaComprador = 30f; // Tiempo límite si decide comprar
-    public float tiempoEsperaNoComprador = 5f; // Tiempo que se queda si decide no comprar
-    [Range(0f, 1f)] public float probabilidadCompra = 0.7f; // 70% de probabilidad de que quiera comprar
+    public float tiempoEsperaComprador = 30f; 
+    public float tiempoEsperaNoComprador = 5f; 
+    [Range(0f, 1f)] public float probabilidadCompra = 0.7f; 
 
     DayObserver dayObserver = new DayObserver();
     HandObserver handObserver = new HandObserver();
@@ -21,10 +21,8 @@ public class ClienteSpawner : MonoBehaviour
 
     void Update()
     {
-        // Si ya hay un cliente en el spawn, no dejamos aparecer a otro
         if (clienteActualEnSpawn != null) return;
 
-        // Controlamos el temporizador de 40 segundos
         temporizadorSpawn += Time.deltaTime;
         if (temporizadorSpawn >= intervaloSpawn)
         {
@@ -56,11 +54,9 @@ public class ClienteSpawner : MonoBehaviour
         Debug.Log(quiereComprar ? "Cliente llegó con intención de comprar." : "Cliente llegó solo de paso (no comprará).");
     }
 
-    // Callback para limpiar la referencia cuando el cliente se va solo o es atendido
     public void OnClienteSeFue()
     {
         clienteActualEnSpawn = null;
-        // Reiniciamos el conteo para los próximos 40 segundos desde que se libera el espacio
         temporizadorSpawn = 0f;
     }
 }

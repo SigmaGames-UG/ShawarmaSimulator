@@ -222,7 +222,10 @@ public class DayManager : MonoBehaviour
 
             diaActual++;
         }
-
+        if (LogrosManager.Instancia != null)
+        {
+            LogrosManager.Instancia.DesbloquearLogro("PrimeraRadio");
+        }
         ReiniciarEstadisticasDiarias();
 
         horaActual = 11;
@@ -356,16 +359,22 @@ public class DayManager : MonoBehaviour
         panelEstadisticas.SetActive(true);
         panelAbierto = true;
         Time.timeScale = 0f;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void CerrarPanelEstadisticas()
     {
         Time.timeScale = 1f;
 
-        if (panelEstadisticas != null) 
+        if (panelEstadisticas != null)
             panelEstadisticas.SetActive(false);
 
         panelAbierto = false;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
 

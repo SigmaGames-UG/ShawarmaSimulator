@@ -17,13 +17,16 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
 
     public int CantidadIngredientes => pedido.Count;
 
+    [Header("Sonidos de Entrega")]
+    public AudioClip sonidoExito; 
+    public AudioClip sonidoFalla; 
+
     private bool quiereComprar = true;
     private float tiempoRestante = 0f;
     private System.Action callbackSalida;
     private bool atendidoOFrustrado = false;
     private int cantidadIngredientesPedido = 0;
-    
-    // aca empieza el patron Prototype
+
     public Cliente Clonar(Vector3 posicion, Quaternion rotacion)
     {
         Cliente clon = Instantiate(this, posicion, rotacion);
@@ -130,20 +133,37 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         return resultado;
     }
 
-    
     public void ValidarYAtenderShawarma(List<string> ingredientesShawarmaEntregado)
     {
         if (atendidoOFrustrado) return;
         atendidoOFrustrado = true;
 
         if (EsPedidoCorrecto(ingredientesShawarmaEntregado))
+        {
             EntregaExitosa?.Invoke(this);
+            if (sonidoExito != null)
+            {
+                AudioSource.PlayClipAtPoint(sonidoExito, transform.position);
+            }
+
+            if (LogrosManager.Instancia != null)
+            {
+                LogrosManager.Instancia.DesbloquearLogro("PrimeraVenta");
+            }
+        }
         else
+        {
             EntregaFallida?.Invoke(this);
+
+            if (sonidoFalla != null)
+            {
+                AudioSource.PlayClipAtPoint(sonidoFalla, transform.position);
+            }
+        }
 
         Salir(atendido: true);
     }
-    
+
     private bool EsPedidoCorrecto(List<string> entregados)
     {
         if (entregados == null || entregados.Count != pedido.Count) return false;
@@ -163,6 +183,14 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
             if (atendido) miColaCliente.DestroyClientAtendido(this);
             else miColaCliente.RemoverClienteDeCola(this);
         }
-        Destroy(gameObject);
+
+        if (ClientePool.Instancia != null)
+        {
+            ClientePool.Instancia.DevolverCliente(this);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

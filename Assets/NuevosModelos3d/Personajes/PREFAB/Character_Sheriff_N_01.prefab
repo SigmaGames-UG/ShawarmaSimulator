@@ -122,3 +122,5 @@ MonoBehaviour:
   estadoActual: 0
   textoPedido: {fileID: 0}
   miColaCliente: {fileID: 0}
+  sonidoExito: {fileID: 8300000, guid: 8b47cc0a6224a4a4cb18010e8e97c7d9, type: 3}
+  sonidoFalla: {fileID: 8300000, guid: 2525032b41cbfa0448075cbfc138e9f1, type: 3}

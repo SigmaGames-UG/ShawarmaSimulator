@@ -12,7 +12,6 @@ public class RadioMusica : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
 
-        // La radio siempre empieza apagada
         audioSource.playOnAwake = false;
         audioSource.Stop();
     }
@@ -27,17 +26,20 @@ public class RadioMusica : MonoBehaviour
         if (estaciones.Length == 0)
             return;
 
-        // Si está apagada, la prendemos en la estación actual
         if (!audioSource.isPlaying)
         {
             audioSource.clip = estaciones[estacionActual];
             audioSource.Play();
 
+            if (LogrosManager.Instancia != null)
+            {
+                LogrosManager.Instancia.DesbloquearLogro("PrimeraRadio");
+            }
+
             Debug.Log("Radio encendida");
             return;
         }
 
-        // Si ya estaba prendida, cambiamos de estación
         estacionActual++;
 
         if (estacionActual >= estaciones.Length)

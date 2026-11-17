@@ -20,9 +20,9 @@ public class ClienteQueue : MonoBehaviour
     [SerializeField] private Vector3 rotacionExtraOffset = new Vector3(0f, 0f, 90f);
 
     [Header("Configuración de la Fila y Spawn")]
-    public int maxClientesEnCola = 3;        
-    public float separacionFila = 2.5f;      
-    public float intervaloSpawn = 20f;       
+    public int maxClientesEnCola = 3;
+    public float separacionFila = 2.5f;
+    public float intervaloSpawn = 20f;
     [Range(0f, 1f)] public float probabilidadCompra = 0.7f;
     public float tiempoEsperaComprador = 30f;
     public float tiempoEsperaNoComprador = 5f;
@@ -86,9 +86,8 @@ public class ClienteQueue : MonoBehaviour
 
         Quaternion rotacionFinal = spawnPoint.rotation * Quaternion.Euler(rotacionExtraOffset);
 
-        IPrototipo<Cliente> prototipo = prefabAleatorio;
+        Cliente newClient = ClientePool.Instancia.ObtenerCliente(prefabAleatorio, posicionEnFila, rotacionFinal);
 
-        Cliente newClient = prototipo.Clonar(posicionEnFila, rotacionFinal);
         handObserver.Suscribir(newClient);
         dayObserver.Suscribir(newClient);
         xpObserver.Suscribir(newClient);
@@ -134,7 +133,7 @@ public class ClienteQueue : MonoBehaviour
         RemoverClienteDeCola(clienteAtendido);
         if (clienteAtendido != null)
         {
-            Destroy(clienteAtendido.gameObject);
+            ClientePool.Instancia.DevolverCliente(clienteAtendido);
         }
     }
 

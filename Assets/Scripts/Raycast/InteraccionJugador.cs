@@ -254,10 +254,9 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO F: CLIENTE INTELIGENTE
+            // CASO F: CLIENTES
             else if (cliente != null)
             {
-                // FASE 1: Tomar la orden
                 if (cliente.estadoActual == Cliente.Estado.EsperandoAtencion)
                 {
                     MostrarIconoYTexto(
@@ -270,9 +269,6 @@ public class InteraccionJugador : MonoBehaviour
                         cliente.AceptarPedido();
                     }
                 }
-
-                // FASE 2: Entregar el Shawarma preparado
-                // FASE 2: Entregar el Shawarma preparado
                 else if (cliente.estadoActual == Cliente.Estado.EsperandoComida)
                 {
                     MostrarIconoYTexto(
@@ -284,7 +280,6 @@ public class InteraccionJugador : MonoBehaviour
                     {
                         if (inventario != null && inventario.ObtenerNombreActual() == "Shawarma")
                         {
-                            // Atendemos al cliente correctamente sumando dinero y XP
                             cliente.ValidarYAtenderShawarma(ManagerExperiencia.ingredientesShawarmaEnMano);
                             inventario.ConsumirHerramientaActual();
                         }
@@ -294,9 +289,10 @@ public class InteraccionJugador : MonoBehaviour
                         }
                     }
                 }
+            }
 
-                // CASO G: SUPERFICIE (MESA / PISO)
-                else
+            // CASO G: APOYAR OBJETOS EN SUPERFICIES
+            else
             {
                 if (inventario.TieneHerramientas())
                 {
@@ -383,5 +379,4 @@ public class InteraccionJugador : MonoBehaviour
             textoAviso.text = "";
         }
     }
-}
 }
