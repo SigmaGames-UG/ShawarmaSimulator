@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class Cliente : MonoBehaviour, IPrototipo<Cliente>
 {
@@ -30,6 +31,19 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
     private bool atendidoOFrustrado = false;
     private int cantidadIngredientesPedido = 0;
 
+    private static readonly int AnimacionCaminar = Animator.StringToHash("Base Layer.Walk");
+    private static readonly int AnimacionEspera = Animator.StringToHash("Base Layer.Idle");
+    private static readonly int AnimacionComer = Animator.StringToHash("Base Layer.Eat");
+
+    private Animator animator;
+    private Transform sillaReservada;
+    [SerializeField] private float tiempoComiendo = 20f;
+
+    private void Awake()
+    {
+        animator = GetComponentInChildren<Animator>();
+    }
+
     public Cliente Clonar(Vector3 posicion, Quaternion rotacion)
     {
         Cliente clon = Instantiate(this, posicion, rotacion);
@@ -41,6 +55,9 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         quiereComprar = compra;
         atendidoOFrustrado = false;
         estadoActual = Estado.EsperandoAtencion;
+
+        if (animator != null && animator.runtimeAnimatorController != null && animator.HasState(0, AnimacionCaminar))
+            animator.Play(AnimacionCaminar, 0, 0f);
 
         if (quiereComprar)
         {
@@ -66,7 +83,7 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         if (quiereComprar)
             ClienteSeFue?.Invoke(this);
 
-        Salir(atendido: false);
+        Salir();
     }
 
     private void GenerarPedidoNormal()
@@ -155,7 +172,15 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
                 LogrosManager.Instancia.DesbloquearLogro("PrimeraVenta");
             }
 
-            EjecutarEstadoPararse();
+            if (miColaCliente == null
+    || !miColaCliente.TryEnviarASilla(this, out sillaReservada))
+            {
+                EjecutarEstadoPararse();
+            }
+            else
+            {
+                CambiarAnimacion(AnimacionCaminar);
+            }
         }
         else
         {
@@ -166,8 +191,38 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
                 AudioSource.PlayClipAtPoint(sonidoFalla, transform.position);
             }
 
-            Salir(atendido: true);
+            Salir();
         }
+    }
+    
+    public void AlLlegarAlPedido()
+    {
+        transform.Rotate(0f, 90f, 0f, Space.World);
+        CambiarAnimacion(AnimacionEspera);
+    }
+
+    public void EsperarEnFila() => CambiarAnimacion(AnimacionEspera);
+
+    public void CaminarAlPedido() => CambiarAnimacion(AnimacionCaminar);
+
+    private void CambiarAnimacion(int estadoAnimacion)
+    {
+        if (animator != null && animator.runtimeAnimatorController != null && animator.HasState(0, estadoAnimacion))
+            animator.CrossFadeInFixedTime(estadoAnimacion, 0.15f, 0, 0f);
+    }
+
+    public void AlLlegarASilla()
+    {
+        CambiarAnimacion(AnimacionComer);
+
+        StartCoroutine(ComerYSalir());
+    }
+    
+    private IEnumerator ComerYSalir()
+    {
+        yield return new WaitForSeconds(tiempoComiendo);
+        Debug.Log("Saliendo");
+        EjecutarEstadoPararse();
     }
 
     private void EjecutarEstadoPararse()
@@ -179,7 +234,7 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
             Instantiate(prefabDesecho, transform.position + new Vector3(0, 0.1f, 0), Quaternion.identity);
         }
 
-        Salir(atendido: true);
+        Salir();
     }
 
     private bool EsPedidoCorrecto(List<string> entregados)
@@ -194,13 +249,15 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
         return true;
     }
 
-    private void Salir(bool atendido)
+    private void Salir()
     {
-        if (miColaCliente != null)
+        if (sillaReservada != null)
         {
-            if (atendido) miColaCliente.DestroyClientAtendido(this);
-            else miColaCliente.RemoverClienteDeCola(this);
+            miColaCliente?.LiberarSilla(sillaReservada);
+            sillaReservada = null;
         }
+        if (miColaCliente != null)
+            miColaCliente.RemoverClienteDeCola(this);
 
         if (ClientePool.Instancia != null)
         {

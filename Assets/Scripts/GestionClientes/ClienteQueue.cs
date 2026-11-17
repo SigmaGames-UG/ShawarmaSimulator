@@ -10,6 +10,9 @@ public class ClienteQueue : MonoBehaviour
     [Tooltip("Arrastra aquí varios prefabs de personajes diferentes.")]
     [SerializeField] private List<Cliente> listaPrefabsClientes = new List<Cliente>();
 
+    [SerializeField] private PathfindingGraph pathfinding;
+    private readonly HashSet<Transform> sillasReservadas = new();
+
     [SerializeField] private Transform spawnPoint;
 
     DayObserver dayObserver = new DayObserver();
@@ -59,6 +62,40 @@ public class ClienteQueue : MonoBehaviour
         ActualizarPantallaPedidos();
     }
 
+    public bool TryEnviarASilla(Cliente cliente, out Transform sillaReservada)
+    {
+        sillaReservada = null;
+
+        if (pathfinding == null || pathfinding.Graph == null
+            || !cliente.TryGetComponent(out ClientePathMovement movement))
+            return false;
+
+        Transform[] sillas = { pathfinding.Chair1, pathfinding.Chair2, pathfinding.Chair3 };
+
+        foreach (Transform silla in sillas)
+        {
+            if (silla == null || !sillasReservadas.Add(silla))
+                continue;
+
+            if (movement.TryMoveTo(pathfinding.Graph, pathfinding.Order, silla, cliente.AlLlegarASilla))
+            {
+                sillaReservada = silla;
+                RemoverClienteDeCola(cliente);
+                return true;
+                
+            }
+
+            sillasReservadas.Remove(silla);
+        }
+
+        return false;
+    }
+
+    public void LiberarSilla(Transform silla)
+    {
+        sillasReservadas.Remove(silla);
+    }
+
     bool EsLocalAbierto()
     {
         if (DayManager.Instancia != null)
@@ -77,12 +114,7 @@ public class ClienteQueue : MonoBehaviour
 
         int indexEnFila = listaClientesEnEspera.Count;
 
-        Vector3 direccionFila = -spawnPoint.forward;
-        direccionFila.y = 0f;
-        direccionFila.Normalize();
-
-        Vector3 posicionEnFila = spawnPoint.position + (direccionFila * (indexEnFila * separacionFila));
-        posicionEnFila.y = spawnPoint.position.y;
+        Vector3 posicionEnFila = ObtenerPosicionEnFila(indexEnFila);
 
         Quaternion rotacionFinal = spawnPoint.rotation * Quaternion.Euler(rotacionExtraOffset);
 
@@ -102,15 +134,23 @@ public class ClienteQueue : MonoBehaviour
             RemoverClienteDeCola(newClient);
         });
 
+        if (indexEnFila == 0)
+            EnviarPrimeroAlPedido();
+        else
+            newClient.EsperarEnFila();
+
         Debug.Log("Cliente automático añadido a la posición " + indexEnFila + " de la fila.");
     }
 
     public void RemoverClienteDeCola(Cliente clienteAEliminar)
     {
-        if (listaClientesEnEspera.Contains(clienteAEliminar))
-        {
-            listaClientesEnEspera.Remove(clienteAEliminar);
-        }
+        int indice = listaClientesEnEspera.IndexOf(clienteAEliminar);
+        if (indice < 0) return;
+
+        listaClientesEnEspera.RemoveAt(indice);
+        handObserver.Desuscribir(clienteAEliminar);
+        dayObserver.Desuscribir(clienteAEliminar);
+        xpObserver.Desuscribir(clienteAEliminar);
 
         int n = clientQueue.Count;
         SimpleLinkedQueue<Cliente> colaTemporal = new SimpleLinkedQueue<Cliente>();
@@ -125,33 +165,53 @@ public class ClienteQueue : MonoBehaviour
         }
         clientQueue = colaTemporal;
 
+        if (indice == 0)
+            EnviarPrimeroAlPedido();
+
         ActualizarTodasLasPosiciones();
     }
 
-    public void DestroyClientAtendido(Cliente clienteAtendido)
+    public bool EsPrimeroEnFila(Cliente cliente)
     {
-        RemoverClienteDeCola(clienteAtendido);
-        if (clienteAtendido != null)
+        return !clientQueue.IsEmpty && clientQueue.Peek() == cliente;
+    }
+
+    private void EnviarPrimeroAlPedido()
+    {
+        if (clientQueue.IsEmpty) return;
+
+        Cliente primero = clientQueue.Peek();
+        if (primero == null) return;
+
+        // A newly promoted customer enters the graph at the spawn node.
+        primero.MoveTo(ObtenerPosicionEnFila(0));
+        if (pathfinding != null && pathfinding.Graph != null
+            && primero.TryGetComponent(out ClientePathMovement movement)
+            && movement.TryMoveTo(pathfinding.Graph, pathfinding.Spawn, pathfinding.Order, primero.AlLlegarAlPedido))
         {
-            ClientePool.Instancia.DevolverCliente(clienteAtendido);
+            primero.CaminarAlPedido();
         }
+        else
+        {
+            primero.EsperarEnFila();
+        }
+    }
+
+    private Vector3 ObtenerPosicionEnFila(int indice)
+    {
+        Vector3 direccionFila = -spawnPoint.forward;
+        direccionFila.y = 0f;
+        return spawnPoint.position + direccionFila.normalized * (indice * separacionFila);
     }
 
     public void ActualizarTodasLasPosiciones()
     {
-        Vector3 direccionFila = -spawnPoint.forward;
-        direccionFila.y = 0f;
-        direccionFila.Normalize();
-
-        for (int i = 0; i < listaClientesEnEspera.Count; i++)
+        // The first customer owns the counter and may already be walking or waiting there.
+        for (int i = 1; i < listaClientesEnEspera.Count; i++)
         {
             Cliente cliente = listaClientesEnEspera[i];
             if (cliente != null)
-            {
-                Vector3 nuevaPosicion = spawnPoint.position + (direccionFila * (i * separacionFila));
-                nuevaPosicion.y = spawnPoint.position.y;
-                cliente.transform.position = nuevaPosicion;
-            }
+                cliente.MoveTo(ObtenerPosicionEnFila(i));
         }
     }
 

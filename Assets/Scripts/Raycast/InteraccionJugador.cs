@@ -252,7 +252,7 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            else if (cliente != null)
+            else if (cliente != null && (cliente.miColaCliente == null || cliente.miColaCliente.EsPrimeroEnFila(cliente)))
             {
                 if (cliente.estadoActual == Cliente.Estado.EsperandoAtencion)
                 {

@@ -4,9 +4,15 @@ public class HandObserver
 {
     public void Suscribir(Cliente c)
     {
-        c.EntregaExitosa += _ => Limpiar();
-        c.EntregaFallida += _ => Limpiar();
+        c.EntregaExitosa += Limpiar;
+        c.EntregaFallida += Limpiar;
     }
 
-    void Limpiar() => ManagerExperiencia.ingredientesShawarmaEnMano.Clear();
+    public void Desuscribir(Cliente c)
+    {
+        c.EntregaExitosa -= Limpiar;
+        c.EntregaFallida -= Limpiar;
+    }
+
+    void Limpiar(Cliente cliente) => ManagerExperiencia.ingredientesShawarmaEnMano.Clear();
 }

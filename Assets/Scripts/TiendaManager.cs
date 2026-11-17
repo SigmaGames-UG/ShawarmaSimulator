@@ -5,7 +5,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 public class TiendaManager : MonoBehaviour
 {
@@ -19,6 +18,61 @@ public class TiendaManager : MonoBehaviour
     public Transform panelBotonesTienda;
 
     private IngredienteBoton[] botonesIngredientes;
+    private ManagerExperiencia managerExperiencia;
+    private Vector2[] posicionesIngredientes;
+    [SerializeField] private Button botonFiltro;
+    [SerializeField] private Button botonOrdenXp;
+    [SerializeField] private Button botonOrdenNombre;
+    [SerializeField] private GameObject opcionesFiltro;
+    private bool ordenarPorNombre;
+
+    private void Start()
+    {
+        if (panelBotonesTienda == null) return;
+
+        var botones = new List<IngredienteBoton>();
+        foreach (Transform hijo in panelBotonesTienda)
+        {
+            if (hijo.TryGetComponent(out IngredienteBoton boton))
+                botones.Add(boton);
+        }
+
+        botonesIngredientes = botones.ToArray();
+        posicionesIngredientes = new Vector2[botonesIngredientes.Length];
+        for (int i = 0; i < botonesIngredientes.Length; i++)
+            posicionesIngredientes[i] = ((RectTransform)botonesIngredientes[i].transform).anchoredPosition;
+
+        // The shop uses fixed row positions instead of a layout group.
+        CollectionSort.SortArray(posicionesIngredientes, (left, right) => right.y.CompareTo(left.y));
+        managerExperiencia = ManagerExperiencia.Instancia;
+        if (managerExperiencia != null)
+        {
+            managerExperiencia.RegistrarDesbloqueosDeTienda(botonesIngredientes);
+            managerExperiencia.IngredientesDesbloqueadosCambiaron += ActualizarEstadoBotonesTienda;
+        }
+
+        if (botonFiltro != null && opcionesFiltro != null)
+            botonFiltro.onClick.AddListener(AlternarOpcionesFiltro);
+        if (botonOrdenXp != null)
+            botonOrdenXp.onClick.AddListener(OrdenarPorXp);
+        if (botonOrdenNombre != null)
+            botonOrdenNombre.onClick.AddListener(OrdenarPorNombre);
+
+        ActualizarEstadoBotonesTienda();
+    }
+
+    private void OnDestroy()
+    {
+        if (botonFiltro != null)
+            botonFiltro.onClick.RemoveListener(AlternarOpcionesFiltro);
+        if (botonOrdenXp != null)
+            botonOrdenXp.onClick.RemoveListener(OrdenarPorXp);
+        if (botonOrdenNombre != null)
+            botonOrdenNombre.onClick.RemoveListener(OrdenarPorNombre);
+
+        if (managerExperiencia != null)
+            managerExperiencia.IngredientesDesbloqueadosCambiaron -= ActualizarEstadoBotonesTienda;
+    }
 
     public MonoBehaviour scriptCamara;
 
@@ -61,33 +115,46 @@ public class TiendaManager : MonoBehaviour
         }
     }
 
+    private void AlternarOpcionesFiltro()
+    {
+        opcionesFiltro.SetActive(!opcionesFiltro.activeSelf);
+    }
+
+    private void OrdenarPorXp() => SeleccionarOrden(false);
+
+    private void OrdenarPorNombre() => SeleccionarOrden(true);
+
+    private void SeleccionarOrden(bool porNombre)
+    {
+        ordenarPorNombre = porNombre;
+        if (opcionesFiltro != null) opcionesFiltro.SetActive(false);
+        OrdenarBotones();
+    }
+
     private void OrdenarBotones()
     {
-        if (panelBotonesTienda == null) return;
+        if (botonesIngredientes == null) return;
 
-        int cantidad = panelBotonesTienda.childCount;
-        botonesIngredientes = new IngredienteBoton[cantidad];
-
-        for (int i = 0; i < cantidad; i++)
+        if (ordenarPorNombre)
         {
-            botonesIngredientes[i] =
-                panelBotonesTienda.GetChild(i)
-                .GetComponent<IngredienteBoton>();
+            CollectionSort.SortArray(botonesIngredientes,
+                (left, right) => StringComparer.CurrentCultureIgnoreCase.Compare(left.nombre, right.nombre));
         }
-
-        CollectionSort.SortArray(botonesIngredientes);
+        else
+        {
+            CollectionSort.SortArray(botonesIngredientes);
+        }
 
         for (int i = 0; i < botonesIngredientes.Length; i++)
         {
-            if (botonesIngredientes[i] != null)
-            {
-                botonesIngredientes[i].transform.SetSiblingIndex(i);
-            }
+            var rect = (RectTransform)botonesIngredientes[i].transform;
+            rect.anchoredPosition = posicionesIngredientes[i];
         }
     }
 
     public void AbrirTienda()
     {
+        if (opcionesFiltro != null) opcionesFiltro.SetActive(false);
         if (panelTienda != null) panelTienda.SetActive(true);
         if (panelCarrito != null) panelCarrito.SetActive(false);
         OrdenarBotones();
@@ -98,24 +165,10 @@ public class TiendaManager : MonoBehaviour
     {
         if (botonesIngredientes == null) return;
 
-        foreach (var botonIngrediente in botonesIngredientes)
+        foreach (IngredienteBoton botonIngrediente in botonesIngredientes)
         {
-            if (botonIngrediente != null)
-            {
-                TextMeshProUGUI textoBoton = botonIngrediente.GetComponentInChildren<TextMeshProUGUI>();
-
-                if (textoBoton != null)
-                {
-                    string nombreIngrediente = textoBoton.text;
-                    bool desbloqueado = EstaDesbloqueado(nombreIngrediente);
-
-                    Button btn = botonIngrediente.GetComponent<Button>();
-                    if (btn != null)
-                    {
-                        btn.interactable = desbloqueado;
-                    }
-                }
-            }
+            if (botonIngrediente.TryGetComponent(out Button boton))
+                boton.interactable = EstaDesbloqueado(botonIngrediente.nombre);
         }
     }
 

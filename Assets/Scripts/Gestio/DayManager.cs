@@ -21,7 +21,7 @@ public class DayManager : MonoBehaviour
     private bool esperandoCierre = false;
     private float acumuladorTiempo = 0f;
 
-    private const float segundosPorMinutoJuego = 0.25f;
+    private const float segundosPorMinutoJuego = 0.1f;
 
     public bool EstaAbierto => localAbierto;
 
@@ -222,10 +222,7 @@ public class DayManager : MonoBehaviour
 
             diaActual++;
         }
-        if (LogrosManager.Instancia != null)
-        {
-            LogrosManager.Instancia.DesbloquearLogro("PrimeraRadio");
-        }
+
         ReiniciarEstadisticasDiarias();
 
         horaActual = 11;
@@ -358,23 +355,18 @@ public class DayManager : MonoBehaviour
 
         panelEstadisticas.SetActive(true);
         panelAbierto = true;
-        Time.timeScale = 0f;
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        Time.timeScale = 0f;
     }
 
     public void CerrarPanelEstadisticas()
     {
         Time.timeScale = 1f;
 
-        if (panelEstadisticas != null)
+        if (panelEstadisticas != null) 
             panelEstadisticas.SetActive(false);
 
         panelAbierto = false;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
 

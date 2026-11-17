@@ -9,6 +9,13 @@ public class XPObserver
         c.ClienteSeFue += OnSeFue;
     }
 
+    public void Desuscribir(Cliente c)
+    {
+        c.EntregaExitosa -= OnExito;
+        c.EntregaFallida -= OnFallo;
+        c.ClienteSeFue -= OnSeFue;
+    }
+
     void OnExito(Cliente c)
     {
         
