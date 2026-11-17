@@ -63,9 +63,11 @@ public class InteraccionJugador : MonoBehaviour
             RadioMusica radio =
                 hit.collider.GetComponentInParent<RadioMusica>();
 
+            DesechoBasura desecho =
+                hit.collider.GetComponentInParent<DesechoBasura>();
+
             UpdateHighlight(hit.collider.GetComponentInParent<AimGlow>());
 
-            // CASO A: MÁQUINA DEL TROMPO
             if (baseTrompo != null)
             {
                 if (!baseTrompo.tieneTrompo)
@@ -122,7 +124,6 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO B: BANDEJA DE LECHUGA
             else if (bandeja != null)
             {
                 if (bandeja.porcionesActuales == 0)
@@ -160,7 +161,6 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO C: RADIO
             else if (radio != null)
             {
                 if (!radio.EstaEncendida())
@@ -188,7 +188,6 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO D: ITEM RECOGIBLE
             else if (item != null)
             {
                 if (inventario.TieneHerramientas())
@@ -210,7 +209,6 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO E: PLATO DE ARMADO
             else if (plato != null)
             {
                 if (inventario.TieneHerramientas())
@@ -254,7 +252,6 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO F: CLIENTES
             else if (cliente != null)
             {
                 if (cliente.estadoActual == Cliente.Estado.EsperandoAtencion)
@@ -291,7 +288,16 @@ public class InteraccionJugador : MonoBehaviour
                 }
             }
 
-            // CASO G: APOYAR OBJETOS EN SUPERFICIES
+            else if (desecho != null)
+            {
+                MostrarIconoYTexto(iconoTeclaE, "Recoger desecho");
+
+                if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                {
+                    desecho.RecogerDesecho();
+                }
+            }
+
             else
             {
                 if (inventario.TieneHerramientas())
@@ -325,7 +331,6 @@ public class InteraccionJugador : MonoBehaviour
         }
     }
 
-    // FUNCIONES AUXILIARES DE INTERFAZ
     void MostrarIcono(Sprite icono)
     {
         if (iconoInteraccionEnPantalla != null)

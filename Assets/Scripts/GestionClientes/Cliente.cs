@@ -8,7 +8,7 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
     public event System.Action<Cliente> EntregaFallida;
     public event System.Action<Cliente> ClienteSeFue;
 
-    public enum Estado { EsperandoAtencion, EsperandoComida, Satisfecho, Enojado }
+    public enum Estado { EsperandoAtencion, EsperandoComida, Satisfecho, Pararse, Enojado }
     public Estado estadoActual = Estado.EsperandoAtencion;
 
     public System.Collections.Generic.Queue<string> pedido = new System.Collections.Generic.Queue<string>();
@@ -18,8 +18,11 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
     public int CantidadIngredientes => pedido.Count;
 
     [Header("Sonidos de Entrega")]
-    public AudioClip sonidoExito; 
-    public AudioClip sonidoFalla; 
+    public AudioClip sonidoExito;
+    public AudioClip sonidoFalla;
+
+    [Header("Desecho")]
+    public GameObject prefabDesecho; 
 
     private bool quiereComprar = true;
     private float tiempoRestante = 0f;
@@ -140,6 +143,7 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
 
         if (EsPedidoCorrecto(ingredientesShawarmaEntregado))
         {
+            estadoActual = Estado.Satisfecho;
             EntregaExitosa?.Invoke(this);
             if (sonidoExito != null)
             {
@@ -150,6 +154,8 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
             {
                 LogrosManager.Instancia.DesbloquearLogro("PrimeraVenta");
             }
+
+            EjecutarEstadoPararse();
         }
         else
         {
@@ -159,6 +165,18 @@ public class Cliente : MonoBehaviour, IPrototipo<Cliente>
             {
                 AudioSource.PlayClipAtPoint(sonidoFalla, transform.position);
             }
+
+            Salir(atendido: true);
+        }
+    }
+
+    private void EjecutarEstadoPararse()
+    {
+        estadoActual = Estado.Pararse;
+
+        if (prefabDesecho != null)
+        {
+            Instantiate(prefabDesecho, transform.position + new Vector3(0, 0.1f, 0), Quaternion.identity);
         }
 
         Salir(atendido: true);
