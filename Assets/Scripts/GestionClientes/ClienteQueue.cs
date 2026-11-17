@@ -22,7 +22,7 @@ public class ClienteQueue : MonoBehaviour
     [Header("Configuración de la Fila y Spawn")]
     public int maxClientesEnCola = 3;
     public float separacionFila = 2.5f;
-    public float intervaloSpawn = 20f;
+    public float intervaloSpawn = 10f;
     [Range(0f, 1f)] public float probabilidadCompra = 0.7f;
     public float tiempoEsperaComprador = 30f;
     public float tiempoEsperaNoComprador = 5f;

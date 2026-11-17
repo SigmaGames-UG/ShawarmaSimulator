@@ -21,7 +21,7 @@ public class DayManager : MonoBehaviour
     private bool esperandoCierre = false;
     private float acumuladorTiempo = 0f;
 
-    private const float segundosPorMinutoJuego = 0.1f;
+    private const float segundosPorMinutoJuego = 0.25f;
 
     public bool EstaAbierto => localAbierto;
 
